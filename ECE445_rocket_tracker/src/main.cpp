@@ -22,9 +22,11 @@ struct beacon_transmission_struct {
   float coords_longitude;
   float coords_latitude;
   float elevation;
+  int callsign;
 };
 
 struct handheld_transmission_struct {
   int command_number;
   float command_data;
+  int callsign;
 };
