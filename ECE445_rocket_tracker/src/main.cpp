@@ -14,7 +14,7 @@ void loop() {
   digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
   Serial.print("off\n");
   delay(100);                       // wait for a second
-
+  // wait for BEN to get real
 }
 
 struct beacon_transmission_struct {
