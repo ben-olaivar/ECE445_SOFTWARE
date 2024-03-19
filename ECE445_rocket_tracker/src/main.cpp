@@ -15,6 +15,8 @@ void loop() {
   Serial.print("off\n");
   delay(100);                       // wait for a second
   // wait for BEN to get real
+  Serial.print("ya mama\n");
+
 }
 
 struct beacon_transmission_struct {
@@ -22,9 +24,11 @@ struct beacon_transmission_struct {
   float coords_longitude;
   float coords_latitude;
   float elevation;
+  int callsign;
 };
 
 struct handheld_transmission_struct {
   int command_number;
   float command_data;
+  int callsign;
 };
