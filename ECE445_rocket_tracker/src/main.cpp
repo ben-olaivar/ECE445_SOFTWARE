@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "pins.h"
 
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
@@ -16,7 +17,6 @@ void loop() {
   delay(100);                       // wait for a second
   // wait for BEN to get real
   Serial.print("ya mama\n");
-
 }
 
 struct beacon_transmission_struct {
