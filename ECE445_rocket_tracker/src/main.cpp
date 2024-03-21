@@ -1,10 +1,12 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include "pins.h"
 
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(9600); // open the serial port at 9600 bps:
+  Wire.begin();         // join i2c bus (address optional for master)
+  Serial.begin(9600);   // open the serial port at 9600 bps:
+
+  pinMode(LED_BUILTIN, OUTPUT); // initialize digital pin LED_BUILTIN as an output.
 }
 
 // the loop function runs over and over again forever

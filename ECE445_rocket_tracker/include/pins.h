@@ -12,11 +12,11 @@
 #define I2C_SCL 28
 
 // Do not touch
-#define XTAL1   7       // Crystal Oscillator pins (DO NOT TOUCH)
-#define XTAL2   8       // Crystal Oscillator pins (DO NOT TOUCH)
-#define RESET   29      // Reset Button
-#define RX      30      // Programming pins (DO NOT TOUCH)
-#define TX      31      // Programming pins (DO NOT TOUCH)
+#define XTAL1   7       // (DO NOT TOUCH) Crystal Oscillator pins
+#define XTAL2   8       // (DO NOT TOUCH) Crystal Oscillator pins
+#define RESET   29      // (DO NOT TOUCH) Reset Button
+#define RX      30      // (DO NOT TOUCH) Programming pins
+#define TX      31      // (DO NOT TOUCH) Programming pins
 
 #define transceiver_CS 19
 #define display_RST 22
