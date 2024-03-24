@@ -15,8 +15,12 @@
 #define XTAL1   7       // (DO NOT TOUCH) Crystal Oscillator pins
 #define XTAL2   8       // (DO NOT TOUCH) Crystal Oscillator pins
 #define RESET   29      // (DO NOT TOUCH) Reset Button
-#define RX      30      // (DO NOT TOUCH) Programming pins
-#define TX      31      // (DO NOT TOUCH) Programming pins
+
+
+#define RX      0       // (DO NOT TOUCH) Programming pins
+#define TX      1       // (DO NOT TOUCH) Programming pins
+// #define RX      30      // (DO NOT TOUCH) Programming pins
+// #define TX      31      // (DO NOT TOUCH) Programming pins
 
 #define transceiver_CS 19
 #define display_RST 22
