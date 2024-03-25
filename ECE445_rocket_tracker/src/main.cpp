@@ -13,11 +13,13 @@ void setup() {
 
   Wire.begin();         // join i2c bus (address optional for master)
 
+  //!-------------------GPS STUFF-------------------
   if (myGPS.begin() == false) //Connect to the Ublox module using Wire port
   {
     Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
     while (1);
   }
+  //!-------------------END GPS STUFF-------------------
 
   pinMode(LED_BUILTIN, OUTPUT); // initialize digital pin LED_BUILTIN as an output.
 }
@@ -31,6 +33,7 @@ void loop() {
   // Serial.print("off\n");
   // delay(100);                       // wait for a second
   
+  //!-------------------GPS STUFF-------------------
   if (millis() - lastTime > 1000)
   {
     lastTime = millis(); //Update the timer
@@ -56,6 +59,7 @@ void loop() {
 
     Serial.println();
   }
+  //!-------------------END GPS STUFF-------------------
 
   
 }
