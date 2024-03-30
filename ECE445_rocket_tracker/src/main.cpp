@@ -33,34 +33,6 @@ void loop() {
   // Serial.print("off\n");
   // delay(100);                       // wait for a second
   
-  //!-------------------GPS STUFF-------------------
-  if (millis() - lastTime > 1000)
-  {
-    lastTime = millis(); //Update the timer
-    
-    long latitude = myGPS.getLatitude();
-    Serial.print(F("Lat: "));
-    Serial.print(latitude);
-
-    long longitude = myGPS.getLongitude();
-    Serial.print(F(" Long: "));
-    Serial.print(longitude);
-    Serial.print(F(" (degrees * 10^-7)"));
-
-    long altitude = myGPS.getAltitude();
-    Serial.print(F(" Alt: "));
-    Serial.print(altitude);
-    Serial.print(F(" (mm)"));
-
-    long altitudeMSL = myGPS.getAltitudeMSL();
-    Serial.print(F(" AltMSL: "));
-    Serial.print(altitudeMSL);
-    Serial.print(F(" (mm)"));
-
-    Serial.println();
-  }
-  //!-------------------END GPS STUFF-------------------
-
   
 }
 
