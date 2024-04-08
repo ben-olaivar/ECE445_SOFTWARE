@@ -1,79 +1,27 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include "pins.h"
-#include "SparkFun_Ublox_Arduino_Library.h" // http://librarymanager/All#SparkFun_u-blox_GNSS
 
-SFE_UBLOX_GPS myGPS;
-long lastTime = 0;
+int compass[32][64];
+int Rows = 32;
+int Cols = 64;
 
 void setup() {
-  // TODO: remove serial stuff on final version
-  Serial.begin(9600);   // open the serial port at 9600 bps:
-  while(!Serial);       // wait for serial to start
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  while(!Serial);
+  Serial.println("Serial success");
 
-  Wire.begin();         // join i2c bus (address optional for master)
-
-  //!-------------------GPS STUFF-------------------
-  if (myGPS.begin() == false) //Connect to the Ublox module using Wire port
-  {
-    Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-    while (1);
+  for (int col = 0; col < Cols; col++){
+    compass[0][col] = 1;
+    compass[31][col] = 1;
   }
-  //!-------------------END GPS STUFF-------------------
-
-  pinMode(LED_BUILTIN, OUTPUT); // initialize digital pin LED_BUILTIN as an output.
+  for (int row = 0; row < Rows; row++) {
+    compass[row][0] = 1;
+    compass[row][63] = 1;
+  }
 }
 
-// the loop function runs over and over again forever
 void loop() {
-  // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  // Serial.print("on\n");
-  // delay(100);                       // wait for a second
-  // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  // Serial.print("off\n");
-  // delay(100);                       // wait for a second
-  
-  //!-------------------GPS STUFF-------------------
-  if (millis() - lastTime > 1000)
-  {
-    lastTime = millis(); //Update the timer
-    
-    long latitude = myGPS.getLatitude();
-    Serial.print(F("Lat: "));
-    Serial.print(latitude);
-
-    long longitude = myGPS.getLongitude();
-    Serial.print(F(" Long: "));
-    Serial.print(longitude);
-    Serial.print(F(" (degrees * 10^-7)"));
-
-    long altitude = myGPS.getAltitude();
-    Serial.print(F(" Alt: "));
-    Serial.print(altitude);
-    Serial.print(F(" (mm)"));
-
-    long altitudeMSL = myGPS.getAltitudeMSL();
-    Serial.print(F(" AltMSL: "));
-    Serial.print(altitudeMSL);
-    Serial.print(F(" (mm)"));
-
-    Serial.println();
-  }
-  //!-------------------END GPS STUFF-------------------
-
-  
+  // put your main code here, to run repeatedly:
+  Serial.println(compass[0][0]);
+  // delay(20000);
 }
-
-struct beacon_transmission_struct {
-  uint8_t error_mask;
-  float coords_longitude;
-  float coords_latitude;
-  float elevation;
-  int callsign;
-};
-
-struct handheld_transmission_struct {
-  int command_number;
-  float command_data;
-  int callsign;
-};
