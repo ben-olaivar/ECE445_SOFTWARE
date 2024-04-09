@@ -18,6 +18,7 @@
  included in any redistribution.
  **************************************************************************/
 
+#include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -39,7 +40,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define LOGO_HEIGHT   16
 #define LOGO_WIDTH    16
-unsigned char PROGMEM logo_bmp[] =
+unsigned char logo_bmp[] =
 { 0b00000000, 0b11000000,
   0b00000001, 0b11000000,
   0b00000001, 0b11000000,
@@ -57,79 +58,7 @@ unsigned char PROGMEM logo_bmp[] =
   0b01110000, 0b01110000,
   0b00000000, 0b00110000 };
 
-void setup() {
-  Serial.begin(9600);
 
-  pinMode(OLED_RESET, OUTPUT);
-
-  digitalWrite(OLED_RESET, HIGH);
-  delay(10);
-  digitalWrite(OLED_RESET, LOW);
-  delay(10);
-  
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  }
-
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
-  display.display();
-  delay(2000); // Pause for 2 seconds
-
-  // Clear the buffer
-  display.clearDisplay();
-
-  // Draw a single pixel in white
-  display.drawPixel(10, 10, SSD1306_WHITE);
-
-  // Show the display buffer on the screen. You MUST call display() after
-  // drawing commands to make them visible on screen!
-  display.display();
-  delay(2000);
-  // display.display() is NOT necessary after every single drawing command,
-  // unless that's what you want...rather, you can batch up a bunch of
-  // drawing operations and then update the screen all at once by calling
-  // display.display(). These examples demonstrate both approaches...
-
-  testdrawline();      // Draw many lines
-
-  testdrawrect();      // Draw rectangles (outlines)
-
-  testfillrect();      // Draw rectangles (filled)
-
-  testdrawcircle();    // Draw circles (outlines)
-
-  testfillcircle();    // Draw circles (filled)
-
-  testdrawroundrect(); // Draw rounded rectangles (outlines)
-
-  testfillroundrect(); // Draw rounded rectangles (filled)
-
-  testdrawtriangle();  // Draw triangles (outlines)
-
-  testfilltriangle();  // Draw triangles (filled)
-
-  testdrawchar();      // Draw characters of the default font
-
-  testdrawstyles();    // Draw 'stylized' characters
-
-  testscrolltext();    // Draw scrolling text
-
-  testdrawbitmap();    // Draw a small bitmap image
-
-  // Invert and restore display, pausing in-between
-  display.invertDisplay(true);
-  delay(1000);
-  display.invertDisplay(false);
-  delay(1000);
-
-  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
-}
-
-void loop() {
-}
 
 void testdrawline() {
   int16_t i;
@@ -419,4 +348,126 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
       }
     }
   }
+}
+
+
+
+
+
+
+
+
+
+SFE_UBLOX_GPS myGPS;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(OLED_RESET, OUTPUT);
+
+  digitalWrite(OLED_RESET, HIGH);
+  delay(10);
+  digitalWrite(OLED_RESET, LOW);
+  delay(10);
+
+
+
+  //!-------------------GPS STUFF-------------------
+  Wire.begin();         // join i2c bus (address optional for master)
+  if (myGPS.begin() == false) //Connect to the Ublox module using Wire port
+  {
+    Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+    while (1);
+  }
+  //!-------------------END GPS STUFF-------------------
+  
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+
+  // Show initial display buffer contents on the screen --
+  // the library initializes this with an Adafruit splash screen.
+  display.display();
+  delay(2000); // Pause for 2 seconds
+
+  // Clear the buffer
+  display.clearDisplay();
+
+  // Draw a single pixel in white
+  display.drawPixel(10, 10, SSD1306_WHITE);
+
+  // Show the display buffer on the screen. You MUST call display() after
+  // drawing commands to make them visible on screen!
+  display.display();
+  delay(2000);
+  // display.display() is NOT necessary after every single drawing command,
+  // unless that's what you want...rather, you can batch up a bunch of
+  // drawing operations and then update the screen all at once by calling
+  // display.display(). These examples demonstrate both approaches...
+
+  testdrawline();      // Draw many lines
+
+  testdrawrect();      // Draw rectangles (outlines)
+
+  testfillrect();      // Draw rectangles (filled)
+
+  testdrawcircle();    // Draw circles (outlines)
+
+  testfillcircle();    // Draw circles (filled)
+
+  testdrawroundrect(); // Draw rounded rectangles (outlines)
+
+  testfillroundrect(); // Draw rounded rectangles (filled)
+
+  testdrawtriangle();  // Draw triangles (outlines)
+
+  testfilltriangle();  // Draw triangles (filled)
+
+  testdrawchar();      // Draw characters of the default font
+
+  testdrawstyles();    // Draw 'stylized' characters
+
+  testscrolltext();    // Draw scrolling text
+
+  testdrawbitmap();    // Draw a small bitmap image
+
+  // Invert and restore display, pausing in-between
+  display.invertDisplay(true);
+  delay(1000);
+  display.invertDisplay(false);
+  delay(1000);
+
+  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
+}
+
+void loop() {
+  //!-------------------GPS STUFF-------------------
+  if (millis() - lastTime > 1000)
+  {
+    lastTime = millis(); //Update the timer
+    
+    long latitude = myGPS.getLatitude();
+    Serial.print(F("Lat: "));
+    Serial.print(latitude);
+
+    long longitude = myGPS.getLongitude();
+    Serial.print(F(" Long: "));
+    Serial.print(longitude);
+    Serial.print(F(" (degrees * 10^-7)"));
+
+    long altitude = myGPS.getAltitude();
+    Serial.print(F(" Alt: "));
+    Serial.print(altitude);
+    Serial.print(F(" (mm)"));
+
+    long altitudeMSL = myGPS.getAltitudeMSL();
+    Serial.print(F(" AltMSL: "));
+    Serial.print(altitudeMSL);
+    Serial.print(F(" (mm)"));
+
+    Serial.println();
+  }
+  //!-------------------END GPS STUFF-------------------
 }
