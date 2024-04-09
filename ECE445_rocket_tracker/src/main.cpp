@@ -1,23 +1,3 @@
-/**************************************************************************
- This is an example for our Monochrome OLEDs based on SSD1306 drivers
-
- Pick one up today in the adafruit shop!
- ------> http://www.adafruit.com/category/63_98
-
- This example is for a 128x32 pixel display using I2C to communicate
- 3 pins are required to interface (two I2C and one reset).
-
- Adafruit invests time and resources providing this open
- source code, please support Adafruit and open-source
- hardware by purchasing products from Adafruit!
-
- Written by Limor Fried/Ladyada for Adafruit Industries,
- with contributions from the open source community.
- BSD license, check license.txt for more information
- All text above, and the splash screen below must be
- included in any redistribution.
- **************************************************************************/
-
 #include <SPI.h>
 #include <Wire.h>
 //#include "SparkFun_Ublox_Arduino_Library.h"
@@ -27,17 +7,14 @@
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
+#define COMPASS_LENGTH 11
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 // The pins for I2C are defined by the Wire-library. 
 // On an arduino UNO:       A4(SDA), A5(SCL)
-// On an arduino MEGA 2560: 20(SDA), 21(SCL)
-// On an arduino LEONARDO:   2(SDA),  3(SCL), ...
 #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3D ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-#define NUMFLAKES     10 // Number of snowflakes in the animation example
 
 
 float dist_between_points(long long1, long lat1, long long2, long lat2) {
@@ -70,26 +47,46 @@ void display_distance_data(long distance_data) {
   // display.display();
 }
 
-#define ARROW_LENGTH 11
-
-
-int update_compass_tip_x(float angle) {
+/* angle_to_x_pos():
+* Given some input angle, return the x position COMPASS_LENGTH from the zero point.
+* DOES NOT ACCOUNT FOR CENTER OF COMPASS...ONLY THE CHANGE IN X FROM CENTER
+*
+* Params: 
+*     - float angle: the angle from 0 degrees going counter clockwise
+*/
+int angle_to_x_pos(float angle) {
   float radians = angle * PI / 180;
-  return int(ARROW_LENGTH * cos(radians));
+  return int(COMPASS_LENGTH * cos(radians));
 }
 
-int update_compass_tip_y(float angle) {
+/* angle_to_y_pos():
+* Given some input angle, return the y position COMPASS_LENGTH from the zero point.
+* DOES NOT ACCOUNT FOR CENTER OF COMPASS...ONLY THE CHANGE IN Y FROM CENTER
+*
+* Params: 
+*     - float angle: the angle from 0 degrees going counter clockwise
+*/
+int angle_to_y_pos(float angle) {
   float radians = angle * PI / 180;
-  return int(ARROW_LENGTH * sin(radians));
+  return int(COMPASS_LENGTH * sin(radians));
 }
 
-
-void drawArrow(int angle) {
+/* drawCompass():
+* Handles updating the angle the compass is pointing
+*
+* Params: 
+*     - float angle: the angle from 0 degrees going counter clockwise
+* 
+* Dependencies: 
+*     - angle_to_x_pos()
+*     - angle_to_y_pos()
+*/
+void drawCompass(float angle) {
   int compass_x_center = 12;
   int compass_y_center = SCREEN_HEIGHT / 2;
 
-  int compass_tip_x = compass_x_center - update_compass_tip_x(angle);
-  int compass_tip_y = compass_y_center - update_compass_tip_y(angle);
+  int compass_tip_x = compass_x_center - angle_to_x_pos(angle);
+  int compass_tip_y = compass_y_center - angle_to_y_pos(angle);
 
   // Serial.println(compass_tip_x);
   // Serial.println(compass_tip_y);
@@ -100,12 +97,25 @@ void drawArrow(int angle) {
 
 }
 
-
-void update_display(long curr_longitude, long curr_latitude, long heading) {
+/* display_data():
+* The do-all function for updating the display given GPS/heading data. Handles
+* calculations for the arrow + distances
+*
+* Params: 
+*     - long curr_longitude: the longitude of the user (handheld tracker)
+*     - long curr_latitude:  the latitude of the user (handheld tracker)
+*     - long heading: the angle the user is facing (in degrees) from North
+* 
+* Dependencies: 
+*     - draw_arrow()
+*     - dist_between_points()
+*     - display_distance_data()
+*/
+void display_data(long curr_longitude, long curr_latitude, long heading) {
   display.clearDisplay();
 
   // First put arrow into screen memory (Left side of screen)
-  drawArrow(heading);
+  drawCompass(heading);
 
   long target_longitude = 0;
   long target_latitude = 0;
@@ -121,12 +131,12 @@ void update_display(long curr_longitude, long curr_latitude, long heading) {
 void setup() {
   Serial.begin(9600);
 
-  pinMode(OLED_RESET, OUTPUT);
+  // pinMode(OLED_RESET, OUTPUT);
 
-  digitalWrite(OLED_RESET, HIGH);
-  delay(10);
-  digitalWrite(OLED_RESET, LOW);
-  delay(10);
+  // digitalWrite(OLED_RESET, HIGH);
+  // delay(10);
+  // digitalWrite(OLED_RESET, LOW);
+  // delay(10);
   
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -136,25 +146,23 @@ void setup() {
 
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
-  display.display();
-  delay(2000); // Pause for 2 seconds
+  // display.display();
+  // delay(2000); // Pause for 2 seconds
 
   // Clear the buffer
   display.clearDisplay();
 
 
-  //!draw arrow
-  // testdrawArrow();
-  while (true) {
-    for (int angle = 0; angle < 360; angle++) {
-      update_display(215, -80, angle);
-      // delay(100);
-    }
-  }
 
-  delay(5000);
 
 }
 
 void loop() {
+  //!draw arrow
+  // testdrawArrow();
+  while (true) {
+    for (int angle = 0; angle < 360; angle++) {
+      display_data(215, -80, angle);
+    }
+  }
 }
