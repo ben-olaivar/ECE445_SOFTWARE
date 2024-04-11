@@ -2,10 +2,11 @@
 #include <SPI.h>
 #include <Wire.h>
 #include "pins.h"
-#include "SparkFun_Ublox_Arduino_Library.h" // http://librarymanager/All#SparkFun_u-blox_GNSS
+#include <SparkFun_Ublox_Arduino_Library.h> // http://librarymanager/All#SparkFun_u-blox_GNSS
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <string.h>
+#include <TinyGPSPlus.h>
 
 
 
@@ -20,19 +21,14 @@
 #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3D ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
 // GPS setup
 SFE_UBLOX_GPS myGPS;
-long lastTime = 0;
+float curr_longitude  = 0;
+float curr_latitude   = 0;
+long curr_heading    = 0;
+long lastTime   = 0;
 
-
-float dist_between_points(long long1, long lat1, long long2, long lat2) {
-  long1 = abs(long1);
-  lat1  = abs(lat1);
-  long2 = abs(long2);
-  lat2  = abs(lat2);
-
-  return sqrt(sq(long1 - long2) + sq(lat1 - lat2));
-}
 
 void display_distance_data(long distance_data) {
   int text_length = 15;
@@ -40,11 +36,11 @@ void display_distance_data(long distance_data) {
   // Serial.println(distance_data);
   display.setTextSize(1);      // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(50, 0);     // Start at top-left corner
+  display.setCursor(35, 0);     // Start at top-left corner
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
 
   char distance_text[text_length] = "Distance: ";
-  String distance = "Distance: " + String(distance_data);
+  String distance = "Distance: " + String(distance_data) + "m";
   distance.toCharArray(distance_text, text_length);
 
   for (int letter = 0; letter < text_length; letter++) {
@@ -62,9 +58,9 @@ void display_distance_data(long distance_data) {
 * Params: 
 *     - float angle: the angle from 0 degrees going counter clockwise
 */
-int angle_to_x_pos(float angle) {
-  float radians = angle * PI / 180;
-  return int(COMPASS_LENGTH * cos(radians));
+int angle_to_x_pos(float angle_radians) {
+  // float radians = angle * PI / 180;
+  return int(COMPASS_LENGTH * cos(angle_radians));
 }
 
 /* angle_to_y_pos():
@@ -74,9 +70,9 @@ int angle_to_x_pos(float angle) {
 * Params: 
 *     - float angle: the angle from 0 degrees going counter clockwise
 */
-int angle_to_y_pos(float angle) {
-  float radians = angle * PI / 180;
-  return int(COMPASS_LENGTH * sin(radians));
+int angle_to_y_pos(float angle_radians) {
+  // float radians = angle * PI / 180;
+  return int(COMPASS_LENGTH * sin(angle_radians));
 }
 
 /* drawCompass():
@@ -89,15 +85,52 @@ int angle_to_y_pos(float angle) {
 *     - angle_to_x_pos()
 *     - angle_to_y_pos()
 */
-void drawCompass(float angle) {
+void drawCompass(float curr_latitude, float curr_longitude, float target_latitude, float target_longitude) {
   int compass_x_center = 12;
   int compass_y_center = SCREEN_HEIGHT / 2;
 
-  int compass_tip_x = compass_x_center - angle_to_x_pos(angle);
-  int compass_tip_y = compass_y_center - angle_to_y_pos(angle);
+  float y_1 = curr_latitude;
+  float x_1 = curr_longitude;
 
-  // Serial.println(compass_tip_x);
-  // Serial.println(compass_tip_y);
+  float y_2 = target_latitude;
+  float x_2 = target_longitude;
+
+  float angle_radians = atan((abs(y_2) - abs(y_1)) / (abs(x_1) - abs(x_2)));
+  Serial.print("Angle in Radians: ");
+  Serial.println(angle_radians);
+  Serial.print(" Angle in Degrees: ");
+  Serial.println(angle_radians * 180 / PI);
+  Serial.println("-----------------------------------");
+
+  // Serial.println(angle_radians);
+  
+  // 1st quadrant
+  if (x_1 < x_2 && y_1 < y_2) {
+    Serial.println("1st quadrant");
+    angle_radians = angle_radians;
+  }
+  // 2nd quadrant
+  else if (x_1 > x_2 && y_1 < y_2) {
+    Serial.println("2nd quadrant");
+    angle_radians = angle_radians + PI / 2;
+  }
+  // 3rd quadrant
+  else if (x_1 > x_2 && y_1 > y_2) {
+    Serial.println("3rd quadrant");
+    angle_radians = angle_radians + PI;
+  }
+  // 4th quadrant
+  else if (x_1 < x_2 && y_1 > y_2) {
+    Serial.println("4th quadrant");
+    angle_radians = angle_radians +  3 * PI / 2;
+  }
+
+  angle_radians = abs(angle_radians);
+
+  // angle_radians = PI / 2;
+
+  int compass_tip_x = compass_x_center + angle_to_x_pos(angle_radians);
+  int compass_tip_y = compass_y_center - angle_to_y_pos(angle_radians);
 
   display.fillCircle(compass_x_center, compass_y_center, 2, SSD1306_INVERSE); // Draw the abse of the 
 
@@ -119,16 +152,20 @@ void drawCompass(float angle) {
 *     - dist_between_points()
 *     - display_distance_data()
 */
-void display_data(long curr_longitude, long curr_latitude, long heading) {
+void display_data(float curr_latitude, float curr_longitude) {
   display.clearDisplay();
 
-  // First put arrow into screen memory (Left side of screen)
-  drawCompass(heading);
+  curr_latitude  = curr_latitude  / 10000000.0; // getting from the form xxxxxxxxx to xx.xxxxxxx
+  curr_longitude = curr_longitude / 10000000.0;
+  float target_latitude  = 401066500 / 10000000.0;   //TODO: Remove these
+  float target_longitude = -882271760 / 10000000.0;  //TODO: Remove these
 
-  long target_longitude = 0;
-  long target_latitude = 0;
-  float distance = dist_between_points(curr_longitude, curr_latitude, target_longitude, target_latitude);
+  // First put arrow into screen memory (Left side of screen)
+  drawCompass(curr_latitude, curr_longitude, target_latitude, target_longitude);
+  
   // Second, put distance data into screen memory (right side of screen)
+  int distance = TinyGPSPlus::distanceBetween(curr_latitude, curr_longitude, target_latitude, target_longitude);
+  
   display_distance_data(distance);
 
   // Upload to display
@@ -138,61 +175,71 @@ void display_data(long curr_longitude, long curr_latitude, long heading) {
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("setup");
 
+  //-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
+  display.clearDisplay(); // Clear the buffer
 
-   //!-------------------GPS STUFF-------------------
-  if (myGPS.begin() == false) //Connect to the Ublox module using Wire port
-  {
+  //-------------------GPS SETUP-------------------
+  // Connect to the Ublox module using Wire port
+  if (myGPS.begin() == false) {
     Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
     while (1);
   }
-  //!-------------------END GPS STUFF-------------------
 
-  // Clear the buffer
-  display.clearDisplay();
+  Serial.println("end of setup");
 
 }
 
 
 int angle = 0;
-
 void loop() {
-  //!draw arrow
+  // Serial.println("Start of loop");
 
-  angle++;
-  while (true) {
-    for (int angle = 0; angle < 360; angle++) {
-      display_data(215, -80, angle);
-    }
-  }
-
-  //!-------------------GPS STUFF-------------------
-  if (millis() - lastTime > 1000)
-  {
+  // take GPS data once every second
+  if (millis() - lastTime > 1000) {
     lastTime = millis(); //Update the timer
     
-    long latitude = myGPS.getLatitude();
+    curr_latitude = myGPS.getLatitude();
     Serial.print(F("Lat: "));
-    Serial.print(latitude);
+    Serial.print(curr_latitude);
+    Serial.println(" ");
 
-    long longitude = myGPS.getLongitude();
-    Serial.print(F(" Long: "));
-    Serial.print(longitude);
-    Serial.print(F(" (degrees * 10^-7)"));
+    curr_longitude = myGPS.getLongitude();
+    Serial.print(F("Long: "));
+    Serial.print(curr_longitude);
+    Serial.println(" ");
 
-    long altitude = myGPS.getHeading();
-    Serial.print(F(" Alt: "));
-    Serial.print(altitude);
-    Serial.print(F(" (mm)"));
+    curr_heading = myGPS.getHeading();
+    Serial.print(F("Heading: "));
+    Serial.print(curr_heading);
+    Serial.println(" ");
 
-    Serial.println();
+    Serial.println("----------------");
   }
-  //!-------------------END GPS STUFF-------------------
+  
+  // 401070137, -882268330
+  // curr_latitude = 401052730;
+  // curr_longitude = -882275360;
+// 40.10599927889323, -88.22547446656257
+  curr_latitude = 401059992;
+  curr_longitude = -882254744;
+  
+  // curr_latitude = 401070137;
+  // curr_longitude = -882268330;
+
+  // curr_heading = 0;
+
+  display_data(curr_latitude, curr_longitude);
+  angle++;
+
+  Serial.println("Got here");
+
 }
 
 
