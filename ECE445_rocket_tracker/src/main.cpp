@@ -1,13 +1,21 @@
+#include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-//#include "SparkFun_Ublox_Arduino_Library.h"
+#include "pins.h"
+#include "SparkFun_Ublox_Arduino_Library.h" // http://librarymanager/All#SparkFun_u-blox_GNSS
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <string.h>
 
+
+
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
 #define COMPASS_LENGTH 11
+
+// GPS setup
+SFE_UBLOX_GPS myGPS;
+long lastTime = 0;
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 // The pins for I2C are defined by the Wire-library. 
@@ -144,16 +152,16 @@ void setup() {
     for(;;); // Don't proceed, loop forever
   }
 
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
-  // display.display();
-  // delay(2000); // Pause for 2 seconds
+   //!-------------------GPS STUFF-------------------
+  if (myGPS.begin() == false) //Connect to the Ublox module using Wire port
+  {
+    Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+    while (1);
+  }
+  //!-------------------END GPS STUFF-------------------
 
   // Clear the buffer
   display.clearDisplay();
-
-
-
 
 }
 
@@ -166,3 +174,60 @@ void loop() {
     }
   }
 }
+
+
+
+
+
+// void setup() {
+
+//   //!-------------------GPS STUFF-------------------
+//   if (myGPS.begin() == false) //Connect to the Ublox module using Wire port
+//   {
+//     Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+//     while (1);
+//   }
+//   //!-------------------END GPS STUFF-------------------
+
+//   pinMode(LED_BUILTIN, OUTPUT); // initialize digital pin LED_BUILTIN as an output.
+// }
+
+// // the loop function runs over and over again forever
+// void loop() {
+//   // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+//   // Serial.print("on\n");
+//   // delay(100);                       // wait for a second
+//   // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+//   // Serial.print("off\n");
+//   // delay(100);                       // wait for a second
+  
+//   //!-------------------GPS STUFF-------------------
+//   if (millis() - lastTime > 1000)
+//   {
+//     lastTime = millis(); //Update the timer
+    
+//     long latitude = myGPS.getLatitude();
+//     Serial.print(F("Lat: "));
+//     Serial.print(latitude);
+
+//     long longitude = myGPS.getLongitude();
+//     Serial.print(F(" Long: "));
+//     Serial.print(longitude);
+//     Serial.print(F(" (degrees * 10^-7)"));
+
+//     long altitude = myGPS.getAltitude();
+//     Serial.print(F(" Alt: "));
+//     Serial.print(altitude);
+//     Serial.print(F(" (mm)"));
+
+//     long altitudeMSL = myGPS.getAltitudeMSL();
+//     Serial.print(F(" AltMSL: "));
+//     Serial.print(altitudeMSL);
+//     Serial.print(F(" (mm)"));
+
+//     Serial.println();
+//   }
+//   //!-------------------END GPS STUFF-------------------
+
+  
+// }
