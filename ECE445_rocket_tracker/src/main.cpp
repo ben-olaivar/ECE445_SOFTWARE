@@ -96,11 +96,12 @@ void drawCompass(float curr_latitude, float curr_longitude, float target_latitud
   float x_2 = target_longitude;
 
   float angle_radians = atan((abs(y_2) - abs(y_1)) / (abs(x_1) - abs(x_2)));
-  Serial.print("Angle in Radians: ");
-  Serial.println(angle_radians);
-  Serial.print(" Angle in Degrees: ");
-  Serial.println(angle_radians * 180 / PI);
+  // Serial.print("Angle in Radians: ");
+  // Serial.println(angle_radians);
   Serial.println("-----------------------------------");
+  angle_radians = abs(angle_radians);
+  Serial.print("Angle in Degrees: ");
+  Serial.println(angle_radians * 180 / PI);
 
   // Serial.println(angle_radians);
   
@@ -112,20 +113,21 @@ void drawCompass(float curr_latitude, float curr_longitude, float target_latitud
   // 2nd quadrant
   else if (x_1 > x_2 && y_1 < y_2) {
     Serial.println("2nd quadrant");
-    angle_radians = angle_radians + PI / 2;
+    angle_radians = PI - angle_radians;
   }
   // 3rd quadrant
   else if (x_1 > x_2 && y_1 > y_2) {
     Serial.println("3rd quadrant");
-    angle_radians = angle_radians + PI;
+    angle_radians = PI + angle_radians;
   }
   // 4th quadrant
   else if (x_1 < x_2 && y_1 > y_2) {
     Serial.println("4th quadrant");
-    angle_radians = angle_radians +  3 * PI / 2;
+    angle_radians = 2 * PI - angle_radians;
   }
 
-  angle_radians = abs(angle_radians);
+  Serial.print(" Angle after quadrant: ");
+  Serial.println(angle_radians * 180 / PI);
 
   // angle_radians = PI / 2;
 
@@ -192,7 +194,7 @@ void setup() {
     while (1);
   }
 
-  Serial.println("end of setup");
+  // Serial.println("end of setup");
 
 }
 
@@ -203,6 +205,7 @@ void loop() {
 
   // take GPS data once every second
   if (millis() - lastTime > 1000) {
+    Serial.println("inside gps update");
     lastTime = millis(); //Update the timer
     
     curr_latitude = myGPS.getLatitude();
@@ -222,23 +225,19 @@ void loop() {
 
     Serial.println("----------------");
   }
+
+  // Serial.println(curr_longitude===
   
-  // 401070137, -882268330
-  // curr_latitude = 401052730;
-  // curr_longitude = -882275360;
-// 40.10599927889323, -88.22547446656257
-  curr_latitude = 401059992;
-  curr_longitude = -882254744;
-  
-  // curr_latitude = 401070137;
-  // curr_longitude = -882268330;
+// 4010797882241403, -8822683113407724
+  curr_latitude = 401079788;
+  curr_longitude = -882268311;
 
   // curr_heading = 0;
 
   display_data(curr_latitude, curr_longitude);
-  angle++;
+  // angle++;
 
-  Serial.println("Got here");
+  // Serial.println("Got here");
 
 }
 
