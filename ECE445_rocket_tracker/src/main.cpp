@@ -2,7 +2,8 @@
 #include <SPI.h>
 #include <Wire.h>
 #include "pins.h"
-#include <SparkFun_Ublox_Arduino_Library.h> // http://librarymanager/All#SparkFun_u-blox_GNSS
+// #include <SparkFun_Ublox_Arduino_Library.h> // http://librarymanager/All#SparkFun_u-blox_GNSS
+#include "gps.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <string.h>
