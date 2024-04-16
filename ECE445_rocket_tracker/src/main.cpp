@@ -104,7 +104,7 @@ void drawCompass(float curr_latitude, float curr_longitude, float target_latitud
   // Serial.print("Angle in Degrees: ");
   // Serial.println(angle_radians * 180 / PI);
 
-  Serial.println(angle_radians);
+  // Serial.println(angle_radians);
   
   // 1st quadrant
   if (x_1 < x_2 && y_1 < y_2) {
@@ -178,12 +178,13 @@ void display_data(float curr_latitude, float curr_longitude) {
 
 void setup() {
   Serial.begin(9600);
+  while(!Serial){}
   // Serial.println("setup");
 
   //-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
+    // Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
   display.clearDisplay(); // Clear the buffer
@@ -191,7 +192,7 @@ void setup() {
   //-------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
   if (myGPS.begin() == false) {
-    Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+    // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
     while (1);
   }
 
@@ -219,7 +220,7 @@ void loop() {
     // Serial.print(curr_longitude);
     // Serial.println(" ");
 
-    curr_heading = myGPS.getHeading();
+    // curr_heading = myGPS.getHeading();
     // Serial.print(F("Heading: "));
     // Serial.print(curr_heading);
     // Serial.println(" ");
@@ -235,7 +236,7 @@ void loop() {
 
   // curr_heading = 0;
 
-  display_data(curr_latitude, curr_longitude);
+  // display_data(curr_latitude, curr_longitude);
   // angle++;
 
   // Serial.println("Got here");
