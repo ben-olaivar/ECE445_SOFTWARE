@@ -1095,47 +1095,47 @@ private:
 	uint8_t rollingChecksumB; //Rolls forward as we receive incoming bytes. Checked against the last two A/B checksum bytes
 
 	//Create bit field for staleness of each datum in PVT we want to monitor
-	//moduleQueried.latitude goes true each time we call getPVT()
+	// moduleQueried.latitude goes true each time we call getPVT()
 	//This reduces the number of times we have to call getPVT as this can take up to ~1s per read
 	//depending on update rate
 	struct
 	{
-		uint32_t gpsiTOW : 1;
-		uint32_t gpsYear : 1;
-		uint32_t gpsMonth : 1;
-		uint32_t gpsDay : 1;
-		uint32_t gpsHour : 1;
-		uint32_t gpsMinute : 1;
-		uint32_t gpsSecond : 1;
-		uint32_t gpsDateValid : 1;
-		uint32_t gpsTimeValid : 1;
-		uint32_t gpsNanosecond : 1;
+		// uint32_t gpsiTOW : 1;
+		// uint32_t gpsYear : 1;
+		// uint32_t gpsMonth : 1;
+		// uint32_t gpsDay : 1;
+		// uint32_t gpsHour : 1;
+		// uint32_t gpsMinute : 1;
+		// uint32_t gpsSecond : 1;
+		// uint32_t gpsDateValid : 1;
+		// uint32_t gpsTimeValid : 1;
+		// uint32_t gpsNanosecond : 1;
 
 		uint32_t all : 1;
-		uint32_t gnssFixOk : 1;
-		uint32_t diffSoln : 1;
-		uint32_t headVehValid : 1;
+		// uint32_t gnssFixOk : 1;
+		// uint32_t diffSoln : 1;
+		// uint32_t headVehValid : 1;
 		uint32_t longitude : 1;
 		uint32_t latitude : 1;
-		uint32_t altitude : 1;
-		uint32_t altitudeMSL : 1;
-		uint32_t horizontalAccEst : 1;
-		uint32_t verticalAccEst : 1;
-		uint32_t nedNorthVel : 1;
-		uint32_t nedEastVel : 1;
-		uint32_t nedDownVel : 1;
-		uint32_t SIV : 1;
-		uint32_t fixType : 1;
-		uint32_t carrierSolution : 1;
-		uint32_t groundSpeed : 1;
-		uint32_t headingOfMotion : 1;
-		uint32_t speedAccEst : 1;
-		uint32_t headingAccEst : 1;
-		uint32_t pDOP : 1;
-		uint32_t invalidLlh : 1;
-		uint32_t headVeh : 1;
-		uint32_t magDec : 1;
-		uint32_t magAcc : 1;
+		// uint32_t altitude : 1;
+		// uint32_t altitudeMSL : 1;
+		// uint32_t horizontalAccEst : 1;
+		// uint32_t verticalAccEst : 1;
+		// uint32_t nedNorthVel : 1;
+		// uint32_t nedEastVel : 1;
+		// uint32_t nedDownVel : 1;
+		// uint32_t SIV : 1;
+		// uint32_t fixType : 1;
+		// uint32_t carrierSolution : 1;
+		// uint32_t groundSpeed : 1;
+		// uint32_t headingOfMotion : 1;
+		// uint32_t speedAccEst : 1;
+		// uint32_t headingAccEst : 1;
+		// uint32_t pDOP : 1;
+		// uint32_t invalidLlh : 1;
+		// uint32_t headVeh : 1;
+		// uint32_t magDec : 1;
+		// uint32_t magAcc : 1;
 		uint32_t versionNumber : 1;
 	} moduleQueried;
 
@@ -1156,21 +1156,21 @@ private:
 		uint16_t highResLongitudeHp : 1;
 	} highResModuleQueried;
 
-  struct
-  {
-    uint16_t all : 1;
-    uint16_t geometricDOP : 1;
-    uint16_t positionDOP : 1;
-    uint16_t timeDOP : 1;
-    uint16_t verticalDOP : 1;
-    uint16_t horizontalDOP : 1;
-    uint16_t northingDOP : 1;
-    uint16_t eastingDOP : 1;
-  } dopModuleQueried;
+//   struct
+//   {
+//     uint16_t all : 1;
+//     uint16_t geometricDOP : 1;
+//     uint16_t positionDOP : 1;
+//     uint16_t timeDOP : 1;
+//     uint16_t verticalDOP : 1;
+//     uint16_t horizontalDOP : 1;
+//     uint16_t northingDOP : 1;
+//     uint16_t eastingDOP : 1;
+//   } dopModuleQueried;
 
 	boolean hnrAttQueried;
-	boolean hnrDynQueried;
-	boolean hnrPVTQueried;
+	// boolean hnrDynQueried;
+	// boolean hnrPVTQueried;
 
 	uint16_t rtcmLen = 0;
 };

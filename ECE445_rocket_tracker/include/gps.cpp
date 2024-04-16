@@ -61,17 +61,6 @@ int32_t SFE_UBLOX_GPS::getLongitude(uint16_t maxWait)
   return (longitude);
 }
 
-//Get the heading of motion (as opposed to heading of car) in degrees * 10^-5
-int32_t SFE_UBLOX_GPS::getHeading(uint16_t maxWait)
-{
-  if (moduleQueried.headingOfMotion == false)
-    getPVT(maxWait);
-  moduleQueried.headingOfMotion = false; //Since we are about to give this to user, mark this data as stale
-  moduleQueried.all = false;
-
-  return (headingOfMotion);
-}
-
 
 //Given a message, calc and store the two byte "8-Bit Fletcher" checksum over the entirety of the message
 //This is called before we send a command message
@@ -873,42 +862,42 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // magAcc = extractInt(90 - startingSpot);
 
       //Mark all datums as fresh (not read before)
-      moduleQueried.gpsiTOW = true;
-      moduleQueried.gpsYear = true;
-      moduleQueried.gpsMonth = true;
-      moduleQueried.gpsDay = true;
-      moduleQueried.gpsHour = true;
-      moduleQueried.gpsMinute = true;
-      moduleQueried.gpsSecond = true;
-      moduleQueried.gpsDateValid = true;
-      moduleQueried.gpsTimeValid = true;
-      moduleQueried.gpsNanosecond = true;
+      // moduleQueried.gpsiTOW = true;
+      // moduleQueried.gpsYear = true;
+      // moduleQueried.gpsMonth = true;
+      // moduleQueried.gpsDay = true;
+      // moduleQueried.gpsHour = true;
+      // moduleQueried.gpsMinute = true;
+      // moduleQueried.gpsSecond = true;
+      // moduleQueried.gpsDateValid = true;
+      // moduleQueried.gpsTimeValid = true;
+      // moduleQueried.gpsNanosecond = true;
 
       moduleQueried.all = true;
-      moduleQueried.gnssFixOk = true;
-      moduleQueried.diffSoln = true;
-      moduleQueried.headVehValid = true;
+      // moduleQueried.gnssFixOk = true;
+      // moduleQueried.diffSoln = true;
+      // moduleQueried.headVehValid = true;
       moduleQueried.longitude = true;
       moduleQueried.latitude = true;
-      moduleQueried.altitude = true;
-      moduleQueried.altitudeMSL = true;
-      moduleQueried.horizontalAccEst = true;
-      moduleQueried.verticalAccEst = true;
-      moduleQueried.nedNorthVel = true;
-      moduleQueried.nedEastVel = true;
-      moduleQueried.nedDownVel = true;
-      moduleQueried.SIV = true;
-      moduleQueried.fixType = true;
-      moduleQueried.carrierSolution = true;
-      moduleQueried.groundSpeed = true;
-      moduleQueried.headingOfMotion = true;
-      moduleQueried.speedAccEst = true;
-      moduleQueried.headingAccEst = true;
-      moduleQueried.pDOP = true;
-      moduleQueried.invalidLlh = true;
-      moduleQueried.headVeh = true;
-      moduleQueried.magDec = true;
-      moduleQueried.magAcc = true;
+      // moduleQueried.altitude = true;
+      // moduleQueried.altitudeMSL = true;
+      // moduleQueried.horizontalAccEst = true;
+      // moduleQueried.verticalAccEst = true;
+      // moduleQueried.nedNorthVel = true;
+      // moduleQueried.nedEastVel = true;
+      // moduleQueried.nedDownVel = true;
+      // moduleQueried.SIV = true;
+      // moduleQueried.fixType = true;
+      // moduleQueried.carrierSolution = true;
+      // moduleQueried.groundSpeed = true;
+      // moduleQueried.headingOfMotion = true;
+      // moduleQueried.speedAccEst = true;
+      // moduleQueried.headingAccEst = true;
+      // moduleQueried.pDOP = true;
+      // moduleQueried.invalidLlh = true;
+      // moduleQueried.headVeh = true;
+      // moduleQueried.magDec = true;
+      // moduleQueried.magAcc = true;
     }
     else if (msg->id == UBX_NAV_HPPOSLLH && msg->len == 36)
     {
@@ -924,19 +913,19 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       horizontalAccuracy = extractLong(28);
       verticalAccuracy = extractLong(32);
 
-      highResModuleQueried.all = true;
+      // highResModuleQueried.all = true;
       highResModuleQueried.highResLatitude = true;
       highResModuleQueried.highResLatitudeHp = true;
       highResModuleQueried.highResLongitude = true;
       highResModuleQueried.highResLongitudeHp = true;
-      highResModuleQueried.elipsoid = true;
-      highResModuleQueried.elipsoidHp = true;
-      highResModuleQueried.meanSeaLevel = true;
-      highResModuleQueried.meanSeaLevelHp = true;
-      highResModuleQueried.geoidSeparation = true;
-      highResModuleQueried.horizontalAccuracy = true;
-      highResModuleQueried.verticalAccuracy = true;
-      moduleQueried.gpsiTOW = true; // this can arrive via HPPOS too.
+      // highResModuleQueried.elipsoid = true;
+      // highResModuleQueried.elipsoidHp = true;
+      // highResModuleQueried.meanSeaLevel = true;
+      // highResModuleQueried.meanSeaLevelHp = true;
+      // highResModuleQueried.geoidSeparation = true;
+      // highResModuleQueried.horizontalAccuracy = true;
+      // highResModuleQueried.verticalAccuracy = true;
+      // moduleQueried.gpsiTOW = true; // this can arrive via HPPOS too.
 
 /*
       if (_printDebug == true)
@@ -985,14 +974,14 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // horizontalDOP = extractInt(12);
       // northingDOP = extractInt(14);
       // eastingDOP = extractInt(16);
-      dopModuleQueried.all = true;
-      dopModuleQueried.geometricDOP = true;
-      dopModuleQueried.positionDOP = true;
-      dopModuleQueried.timeDOP = true;
-      dopModuleQueried.verticalDOP = true;
-      dopModuleQueried.horizontalDOP = true;
-      dopModuleQueried.northingDOP = true;
-      dopModuleQueried.eastingDOP = true;
+      // dopModuleQueried.all = true;
+      // dopModuleQueried.geometricDOP = true;
+      // dopModuleQueried.positionDOP = true;
+      // dopModuleQueried.timeDOP = true;
+      // dopModuleQueried.verticalDOP = true;
+      // dopModuleQueried.horizontalDOP = true;
+      // dopModuleQueried.northingDOP = true;
+      // dopModuleQueried.eastingDOP = true;
     }
     break;
   case UBX_CLASS_HNR:
@@ -1028,7 +1017,7 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // hnrVehDyn.yAccelValid = (bitfield0 & 0x00001000) > 0;
       // hnrVehDyn.zAccelValid = (bitfield0 & 0x00002000) > 0;
 
-      hnrDynQueried = true;
+      // hnrDynQueried = true;
     }
     else if (msg->id == UBX_HNR_PVT && msg->len == 72)
     {
@@ -1067,7 +1056,7 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // hnrPVT.TOWSET = (flags & 0x08) > 0;
       hnrPVT.headVehValid = (flags & 0x10) > 0;
 
-      hnrPVTQueried = true;
+      // hnrPVTQueried = true;
     }
   }
 }
