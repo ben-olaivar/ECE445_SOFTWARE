@@ -99,36 +99,36 @@ void drawCompass(float curr_latitude, float curr_longitude, float target_latitud
   float angle_radians = atan((abs(y_2) - abs(y_1)) / (abs(x_1) - abs(x_2)));
   // Serial.print("Angle in Radians: ");
   // Serial.println(angle_radians);
-  Serial.println("-----------------------------------");
+  // Serial.println("-----------------------------------");
   angle_radians = abs(angle_radians);
-  Serial.print("Angle in Degrees: ");
-  Serial.println(angle_radians * 180 / PI);
+  // Serial.print("Angle in Degrees: ");
+  // Serial.println(angle_radians * 180 / PI);
 
-  // Serial.println(angle_radians);
+  Serial.println(angle_radians);
   
   // 1st quadrant
   if (x_1 < x_2 && y_1 < y_2) {
-    Serial.println("1st quadrant");
+    // Serial.println("1st quadrant");
     angle_radians = angle_radians;
   }
   // 2nd quadrant
   else if (x_1 > x_2 && y_1 < y_2) {
-    Serial.println("2nd quadrant");
+    // Serial.println("2nd quadrant");
     angle_radians = PI - angle_radians;
   }
   // 3rd quadrant
   else if (x_1 > x_2 && y_1 > y_2) {
-    Serial.println("3rd quadrant");
+    // Serial.println("3rd quadrant");
     angle_radians = PI + angle_radians;
   }
   // 4th quadrant
   else if (x_1 < x_2 && y_1 > y_2) {
-    Serial.println("4th quadrant");
+    // Serial.println("4th quadrant");
     angle_radians = 2 * PI - angle_radians;
   }
 
-  Serial.print(" Angle after quadrant: ");
-  Serial.println(angle_radians * 180 / PI);
+  // Serial.print(" Angle after quadrant: ");
+  // Serial.println(angle_radians * 180 / PI);
 
   // angle_radians = PI / 2;
 
@@ -178,7 +178,7 @@ void display_data(float curr_latitude, float curr_longitude) {
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("setup");
+  // Serial.println("setup");
 
   //-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
@@ -206,25 +206,25 @@ void loop() {
 
   // take GPS data once every second
   if (millis() - lastTime > 1000) {
-    Serial.println("inside gps update");
+    // Serial.println("inside gps update");
     lastTime = millis(); //Update the timer
     
     curr_latitude = myGPS.getLatitude();
-    Serial.print(F("Lat: "));
-    Serial.print(curr_latitude);
-    Serial.println(" ");
+    // Serial.print(F("Lat: "));
+    // Serial.print(curr_latitude);
+    // Serial.println(" ");
 
     curr_longitude = myGPS.getLongitude();
-    Serial.print(F("Long: "));
-    Serial.print(curr_longitude);
-    Serial.println(" ");
+    // Serial.print(F("Long: "));
+    // Serial.print(curr_longitude);
+    // Serial.println(" ");
 
     curr_heading = myGPS.getHeading();
-    Serial.print(F("Heading: "));
-    Serial.print(curr_heading);
-    Serial.println(" ");
+    // Serial.print(F("Heading: "));
+    // Serial.print(curr_heading);
+    // Serial.println(" ");
 
-    Serial.println("----------------");
+    // Serial.println("----------------");
   }
 
   // Serial.println(curr_longitude===
