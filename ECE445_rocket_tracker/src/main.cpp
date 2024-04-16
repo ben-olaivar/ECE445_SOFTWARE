@@ -176,10 +176,9 @@ void display_data(float curr_latitude, float curr_longitude) {
 }
 
 void setup() {
-
-  Serial.begin(9600);
-  while(!Serial){}
-  Serial.println("------------------------------setup------------------------------");
+  // Serial.begin(9600);
+  // while(!Serial){}
+  // Serial.println("------------------------------setup------------------------------");
   
   pinMode(LED_BUILTIN, OUTPUT);
   Wire.begin();         // join i2c bus (address optional for master)
@@ -198,12 +197,12 @@ void setup() {
   // Connect to the Ublox module using Wire port
   if (myGPS.begin() == false) {
     // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-    // while (1) {
-    //   digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-    //   delay(1000);                       // wait for a second
-    //   digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-    //   delay(1000);                       // wait for a second
-    // }
+    while (1) {
+      digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(1000);                       // wait for a second
+      digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+      delay(1000);                       // wait for a second
+    }
   }
 
   
@@ -211,7 +210,9 @@ void setup() {
 }
 
 
-int angle = 0;
+
+
+
 void loop() {
 
   // Serial.println("Start of loop");
@@ -247,13 +248,13 @@ void loop() {
   
 
 // 40109742224700966, -8824001914554178
-  curr_latitude = 401097422;
-  curr_longitude = -882400191;
+  // curr_latitude = 401097422;
+  // curr_longitude = -882400191;
 
   // curr_heading = 0;
   display_data(curr_latitude, curr_longitude);
 
-  Serial.println("end loop");
+  // Serial.println("end loop");
 
   // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   // delay(1000);                       // wait for a second
