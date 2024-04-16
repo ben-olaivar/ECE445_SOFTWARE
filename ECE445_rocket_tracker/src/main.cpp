@@ -177,8 +177,10 @@ void display_data(float curr_latitude, float curr_longitude) {
 
 void setup() {
 
-  // Serial.begin(9600);
-  // while(!Serial){}
+  Serial.begin(9600);
+  while(!Serial){}
+  Serial.println("------------------------------setup------------------------------");
+  
   pinMode(LED_BUILTIN, OUTPUT);
   Wire.begin();         // join i2c bus (address optional for master)
 
@@ -204,7 +206,6 @@ void setup() {
     // }
   }
 
-  // Serial.println("end of setup");
   
 
 }
@@ -212,6 +213,7 @@ void setup() {
 
 int angle = 0;
 void loop() {
+
   // Serial.println("Start of loop");
 
   // take GPS data once every second
@@ -250,6 +252,8 @@ void loop() {
 
   // curr_heading = 0;
   display_data(curr_latitude, curr_longitude);
+
+  Serial.println("end loop");
 
   // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   // delay(1000);                       // wait for a second
