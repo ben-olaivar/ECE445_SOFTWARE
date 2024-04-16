@@ -52,10 +52,10 @@
 
 #include <Wire.h>
 
-const uint8_t VAL_LAYER_RAM = (1 << 0);
-const uint8_t VAL_LAYER_BBR = (1 << 1);
-const uint8_t VAL_LAYER_FLASH = (1 << 2);
-const uint8_t VAL_LAYER_ALL = VAL_LAYER_RAM | VAL_LAYER_BBR | VAL_LAYER_FLASH; //Not valid with getVal()
+// const uint8_t VAL_LAYER_RAM = (1 << 0);
+// const uint8_t VAL_LAYER_BBR = (1 << 1);
+// const uint8_t VAL_LAYER_FLASH = (1 << 2);
+// const uint8_t VAL_LAYER_ALL = VAL_LAYER_RAM | VAL_LAYER_BBR | VAL_LAYER_FLASH; //Not valid with getVal()
 
 
 // #include "gps_config_keys.h"
@@ -116,24 +116,24 @@ typedef enum
 
 
 // //Registers
-const uint8_t UBX_SYNCH_1 = 0xB5;
-const uint8_t UBX_SYNCH_2 = 0x62;
+// const uint8_t UBX_SYNCH_1 = 0xB5;
+// const uint8_t UBX_SYNCH_2 = 0x62;
 
 // //The following are UBX Class IDs. Descriptions taken from ZED-F9P Interface Description Document page 32, NEO-M8P Interface Description page 145
 const uint8_t UBX_CLASS_NAV = 0x01;	 //Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
 // const uint8_t UBX_CLASS_RXM = 0x02;	 //Receiver Manager Messages: Satellite Status, RTC Status
 // const uint8_t UBX_CLASS_INF = 0x04;	 //Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
-const uint8_t UBX_CLASS_ACK = 0x05;	 //Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
-const uint8_t UBX_CLASS_CFG = 0x06;	 //Configuration Input Messages: Configure the receiver.
+// const uint8_t UBX_CLASS_ACK = 0x05;	 //Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
+// const uint8_t UBX_CLASS_CFG = 0x06;	 //Configuration Input Messages: Configure the receiver.
 // const uint8_t UBX_CLASS_UPD = 0x09;	 //Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
-const uint8_t UBX_CLASS_MON = 0x0A;	 //Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
+// const uint8_t UBX_CLASS_MON = 0x0A;	 //Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
 // const uint8_t UBX_CLASS_AID = 0x0B;	 //(NEO-M8P ONLY!!!) AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
 // const uint8_t UBX_CLASS_TIM = 0x0D;	 //Timing Messages: Time Pulse Output, Time Mark Results
 // const uint8_t UBX_CLASS_ESF = 0x10;	 //(NEO-M8P ONLY!!!) External Sensor Fusion Messages: External Sensor Measurements and Status Information
 // const uint8_t UBX_CLASS_MGA = 0x13;	 //Multiple GNSS Assistance Messages: Assistance data for various GNSS
 // const uint8_t UBX_CLASS_LOG = 0x21;	 //Logging Messages: Log creation, deletion, info and retrieval
 // const uint8_t UBX_CLASS_SEC = 0x27;	 //Security Feature Messages
-const uint8_t UBX_CLASS_HNR = 0x28;	 //(NEO-M8P ONLY!!!) High Rate Navigation Results Messages: High rate time, position speed, heading
+// const uint8_t UBX_CLASS_HNR = 0x28;	 //(NEO-M8P ONLY!!!) High Rate Navigation Results Messages: High rate time, position speed, heading
 // const uint8_t UBX_CLASS_NMEA = 0xF0; //NMEA Strings: standard NMEA strings
 
 // //The following are used for configuration. Descriptions are from the ZED-F9P Interface Description pg 33-34 and NEO-M9N Interface Description pg 47-48
@@ -576,7 +576,7 @@ public:
 // 	uint8_t getFixType(uint16_t maxWait = getPVTmaxWait);			  //Returns the type of fix: 0=no, 3=3D, 4=GNSS+Deadreckoning
 // 	uint8_t getCarrierSolutionType(uint16_t maxWait = getPVTmaxWait); //Returns RTK solution: 0=no, 1=float solution, 2=fixed solution
 // 	int32_t getGroundSpeed(uint16_t maxWait = getPVTmaxWait);		  //Returns speed in mm/s
-	int32_t getHeading(uint16_t maxWait = getPVTmaxWait);			  //Returns heading in degrees * 10^-5
+	// int32_t getHeading(uint16_t maxWait = getPVTmaxWait);			  //Returns heading in degrees * 10^-5
 // 	uint16_t getPDOP(uint16_t maxWait = getPVTmaxWait);				  //Returns positional dillution of precision * 10^-2 (dimensionless)
 // 	uint16_t getYear(uint16_t maxWait = getPVTmaxWait);
 // 	uint8_t getMonth(uint16_t maxWait = getPVTmaxWait);
@@ -730,10 +730,10 @@ public:
 	boolean clearAntPIO(uint16_t maxWait = 1100);																												 //Clears the antenna control pin settings to release the PIOs
 	geofenceParams currentGeofenceParams;																														 // Global to store the geofence parameters
 
-	boolean powerSaveMode(bool power_save = true, uint16_t maxWait = 1100);
-	uint8_t getPowerSaveMode(uint16_t maxWait = 1100); // Returns 255 if the sendCommand fails
-	boolean powerOff(uint32_t durationInMs, uint16_t maxWait = 1100);
-	boolean powerOffWithInterrupt(uint32_t durationInMs, uint32_t wakeupSources = VAL_RXM_PMREQ_WAKEUPSOURCE_EXTINT0, boolean forceWhileUsb = true, uint16_t maxWait = 1100);
+	// boolean powerSaveMode(bool power_save = true, uint16_t maxWait = 1100);
+	// uint8_t getPowerSaveMode(uint16_t maxWait = 1100); // Returns 255 if the sendCommand fails
+	// boolean powerOff(uint32_t durationInMs, uint16_t maxWait = 1100);
+	// boolean powerOffWithInterrupt(uint32_t durationInMs, uint32_t wakeupSources = VAL_RXM_PMREQ_WAKEUPSOURCE_EXTINT0, boolean forceWhileUsb = true, uint16_t maxWait = 1100);
 
 	//Change the dynamic platform model using UBX-CFG-NAV5
 	boolean setDynamicModel(dynModel newDynamicModel = DYN_MODEL_PORTABLE, uint16_t maxWait = 1100);
@@ -807,13 +807,13 @@ public:
 	// bool gpsDateValid;
 	// bool gpsTimeValid;
 
-	bool gnssFixOk;      //valid fix (i.e within DOP & accuracy masks)
-	bool diffSoln;       //Differential corrections were applied
-	bool headVehValid;
+	// bool gnssFixOk;      //valid fix (i.e within DOP & accuracy masks)
+	// bool diffSoln;       //Differential corrections were applied
+	// bool headVehValid;
 	int32_t latitude;		 //Degrees * 10^-7 (more accurate than floats)
 	int32_t longitude;		 //Degrees * 10^-7 (more accurate than floats)
-	int32_t altitude;		 //Number of mm above ellipsoid
-	int32_t altitudeMSL;	 //Number of mm above Mean Sea Level
+	// int32_t altitude;		 //Number of mm above ellipsoid
+	// int32_t altitudeMSL;	 //Number of mm above Mean Sea Level
 	// uint32_t horizontalAccEst;
 	// uint32_t verticalAccEst;
 	// int32_t nedNorthVel;
@@ -823,11 +823,11 @@ public:
 	// uint8_t fixType;		 //Tells us when we have a solution aka lock
 	// uint8_t carrierSolution; //Tells us when we have an RTK float/fixed solution
 	// int32_t groundSpeed;	 //mm/s
-	int32_t headingOfMotion; //degrees * 10^-5
+	// int32_t headingOfMotion; //degrees * 10^-5
 	// uint32_t speedAccEst;
 	// uint32_t headingAccEst;
-	uint16_t pDOP;			 //Positional dilution of precision * 10^-2 (dimensionless)
-	bool invalidLlh;
+	// uint16_t pDOP;			 //Positional dilution of precision * 10^-2 (dimensionless)
+	// bool invalidLlh;
 	// int32_t headVeh;
 	// int16_t magDec;
 	// uint16_t magAcc;
@@ -837,20 +837,20 @@ public:
 	// uint32_t timeOfWeek;		 // ms
 	int32_t highResLatitude;	 // Degrees * 10^-7
 	int32_t highResLongitude;	 // Degrees * 10^-7
-	int32_t elipsoid;			 // Height above ellipsoid in mm (Typo! Should be eLLipsoid! **Uncorrected for backward-compatibility.**)
-	int32_t meanSeaLevel;		 // Height above mean sea level in mm
-	int32_t geoidSeparation;	 // This seems to only be provided in NMEA GGA and GNS messages
-	uint32_t horizontalAccuracy; // mm * 10^-1 (i.e. 0.1mm)
-	uint32_t verticalAccuracy;	 // mm * 10^-1 (i.e. 0.1mm)
-	int8_t elipsoidHp;			 // High precision component of the height above ellipsoid in mm * 10^-1 (Deliberate typo! Should be eLLipsoidHp!)
-	int8_t meanSeaLevelHp;		 // High precision component of Height above mean sea level in mm * 10^-1
+	// int32_t elipsoid;			 // Height above ellipsoid in mm (Typo! Should be eLLipsoid! **Uncorrected for backward-compatibility.**)
+	// int32_t meanSeaLevel;		 // Height above mean sea level in mm
+	// int32_t geoidSeparation;	 // This seems to only be provided in NMEA GGA and GNS messages
+	// uint32_t horizontalAccuracy; // mm * 10^-1 (i.e. 0.1mm)
+	// uint32_t verticalAccuracy;	 // mm * 10^-1 (i.e. 0.1mm)
+	// int8_t elipsoidHp;			 // High precision component of the height above ellipsoid in mm * 10^-1 (Deliberate typo! Should be eLLipsoidHp!)
+	// int8_t meanSeaLevelHp;		 // High precision component of Height above mean sea level in mm * 10^-1
 	int8_t highResLatitudeHp;	 // High precision component of latitude: Degrees * 10^-9
 	int8_t highResLongitudeHp;	 // High precision component of longitude: Degrees * 10^-9
 
-	uint16_t rtcmFrameCounter = 0; //Tracks the type of incoming byte inside RTCM frame
+	// uint16_t rtcmFrameCounter = 0; //Tracks the type of incoming byte inside RTCM frame
 
-	uint16_t geometricDOP; // Geometric dilution of precision * 10^-2
-	uint16_t positionDOP; // Posoition dilution of precision * 10^-2
+	// uint16_t geometricDOP; // Geometric dilution of precision * 10^-2
+	// uint16_t positionDOP; // Posoition dilution of precision * 10^-2
 	// uint16_t timeDOP; // Time dilution of precision * 10^-2
 	// uint16_t verticalDOP; // Vertical dilution of precision * 10^-2
 	// uint16_t horizontalDOP; // Horizontal dilution of precision * 10^-2
@@ -919,16 +919,16 @@ public:
 	// } vehAtt;
 
 	//HNR-specific structs
-	struct hnrAttitudeSolution
-	{
-		uint32_t iTOW;
-		int32_t roll; // Degrees * 1e-5
-		int32_t pitch; // Degrees * 1e-5
-		int32_t heading; // Degrees * 1e-5
-		uint32_t accRoll; // Degrees * 1e-5
-		uint32_t accPitch; // Degrees * 1e-5
-		uint32_t accHeading; // Degrees * 1e-5
-	} hnrAtt;
+	// struct hnrAttitudeSolution
+	// {
+	// 	uint32_t iTOW;
+	// 	int32_t roll; // Degrees * 1e-5
+	// 	int32_t pitch; // Degrees * 1e-5
+	// 	int32_t heading; // Degrees * 1e-5
+	// 	uint32_t accRoll; // Degrees * 1e-5
+	// 	uint32_t accPitch; // Degrees * 1e-5
+	// 	uint32_t accHeading; // Degrees * 1e-5
+	// } hnrAtt;
 
 
 
@@ -968,12 +968,12 @@ public:
 		// boolean validTime;
 		// boolean fullyResolved;
 		// int32_t nano;
-		uint8_t gpsFix;
-		boolean gpsFixOK;
-		boolean diffSoln;
+		// uint8_t gpsFix;
+		// boolean gpsFixOK;
+		// boolean diffSoln;
 		// boolean WKNSET;
 		// boolean TOWSET;
-		boolean headVehValid;
+		// boolean headVehValid;
 		int32_t lon; // Degrees * 1e-7
 		int32_t lat; // Degrees * 1e-7
 		int32_t height; // mm above ellipsoid
@@ -1022,12 +1022,12 @@ private:
 	// 	CLASS_NOT_AN_ACK
 	// } ubxFrameClass = CLASS_NONE;
 
-	enum commTypes
-	{
-		COMM_TYPE_I2C = 0,
-		COMM_TYPE_SERIAL,
-		COMM_TYPE_SPI
-	} commType = COMM_TYPE_I2C; //Controls which port we look to for incoming bytes
+	// enum commTypes
+	// {
+	// 	COMM_TYPE_I2C = 0,
+	// 	COMM_TYPE_SERIAL,
+	// 	COMM_TYPE_SPI
+	// } commType = COMM_TYPE_I2C; //Controls which port we look to for incoming bytes
 
 	//Functions
 	boolean checkUbloxInternal(ubxPacket *incomingUBX, uint8_t requestedClass = 255, uint8_t requestedID = 255); //Checks module with user selected commType
@@ -1040,44 +1040,44 @@ private:
 	void addToChecksum(uint8_t incoming);																		 //Given an incoming byte, adjust rollingChecksumA/B
 
 	//Variables
-	TwoWire *_i2cPort;				//The generic connection to user's chosen I2C hardware
-	Stream *_serialPort;			//The generic connection to user's chosen Serial hardware
-	Stream *_nmeaOutputPort = NULL; //The user can assign an output port to print NMEA sentences if they wish
-	Stream *_debugSerial;			//The stream to send debug messages to if enabled
+	// TwoWire *_i2cPort;				//The generic connection to user's chosen I2C hardware
+	// Stream *_serialPort;			//The generic connection to user's chosen Serial hardware
+	// Stream *_nmeaOutputPort = NULL; //The user can assign an output port to print NMEA sentences if they wish
+	// Stream *_debugSerial;			//The stream to send debug messages to if enabled
 
-	uint8_t _gpsI2Caddress = 0x42; //Default 7-bit unshifted address of the ublox 6/7/8/M8/F9 series
+	// uint8_t _gpsI2Caddress = 0x42; //Default 7-bit unshifted address of the ublox 6/7/8/M8/F9 series
 	//This can be changed using the ublox configuration software
 
-	boolean _printDebug = false;		//Flag to print the serial commands we are sending to the Serial port for debug
-	boolean _printLimitedDebug = false; //Flag to print limited debug messages. Useful for I2C debugging or high navigation rates
+	// boolean _printDebug = false;		//Flag to print the serial commands we are sending to the Serial port for debug
+	// boolean _printLimitedDebug = false; //Flag to print limited debug messages. Useful for I2C debugging or high navigation rates
 
 	//The packet buffers
 	//These are pointed at from within the ubxPacket
-	uint8_t payloadAck[2];				  // Holds the requested ACK/NACK
-	uint8_t payloadCfg[MAX_PAYLOAD_SIZE]; // Holds the requested data packet
-	uint8_t payloadBuf[2];				  // Temporary buffer used to screen incoming packets or dump unrequested packets
+	// uint8_t payloadAck[2];				  // Holds the requested ACK/NACK
+	// uint8_t payloadCfg[MAX_PAYLOAD_SIZE]; // Holds the requested data packet
+	// uint8_t payloadBuf[2];				  // Temporary buffer used to screen incoming packets or dump unrequested packets
 
 	//Init the packet structures and init them with pointers to the payloadAck, payloadCfg and payloadBuf arrays
-	ubxPacket packetAck = {0, 0, 0, 0, 0, payloadAck, 0, 0, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED};
-	ubxPacket packetCfg = {0, 0, 0, 0, 0, payloadCfg, 0, 0, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED};
-	ubxPacket packetBuf = {0, 0, 0, 0, 0, payloadBuf, 0, 0, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED};
+	// ubxPacket packetAck = {0, 0, 0, 0, 0, payloadAck, 0, 0, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED};
+	// ubxPacket packetCfg = {0, 0, 0, 0, 0, payloadCfg, 0, 0, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED};
+	// ubxPacket packetBuf = {0, 0, 0, 0, 0, payloadBuf, 0, 0, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED, SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED};
 
 	//Flag if this packet is unrequested (and so should be ignored and not copied into packetCfg or packetAck)
-	boolean ignoreThisPayload = false;
+	// boolean ignoreThisPayload = false;
 
 	//Identify which buffer is in use
 	//Data is stored in packetBuf until the requested class and ID can be validated
 	//If a match is seen, data is diverted into packetAck or packetCfg
-	sfe_ublox_packet_buffer_e activePacketBuffer = SFE_UBLOX_PACKET_PACKETBUF;
+	// sfe_ublox_packet_buffer_e activePacketBuffer = SFE_UBLOX_PACKET_PACKETBUF;
 
 	//Limit checking of new data to every X ms
 	//If we are expecting an update every X Hz then we should check every half that amount of time
 	//Otherwise we may block ourselves from seeing new data
-	uint8_t i2cPollingWait = 100; //Default to 100ms. Adjusted when user calls setNavigationFrequency()
+	// uint8_t i2cPollingWait = 100; //Default to 100ms. Adjusted when user calls setNavigationFrequency()
 
-	unsigned long lastCheck = 0;
-	boolean autoPVT = false;			  //Whether autoPVT is enabled or not
-	boolean autoPVTImplicitUpdate = true; // Whether autoPVT is triggered by accessing stale data (=true) or by a call to checkUblox (=false)
+	// unsigned long lastCheck = 0;
+	// boolean autoPVT = false;			  //Whether autoPVT is enabled or not
+	// boolean autoPVTImplicitUpdate = true; // Whether autoPVT is triggered by accessing stale data (=true) or by a call to checkUblox (=false)
 // 	boolean autoHPPOSLLH = false;			  //Whether autoHPPOSLLH is enabled or not
 // 	boolean autoHPPOSLLHImplicitUpdate = true; // Whether autoHPPOSLLH is triggered by accessing stale data (=true) or by a call to checkUblox (=false)
 //   boolean autoDOP = false;       //Whether autoDOP is enabled or not
@@ -1089,17 +1089,17 @@ private:
 // 	boolean autoHNRPVT = false;       //Whether auto HNR PVT is enabled or not
 //   boolean autoHNRPVTImplicitUpdate = true; // Whether auto HNR PVT is triggered by accessing stale data (=true) or by a call to checkUblox (=false)
 
-	uint16_t ubxFrameCounter;			  //It counts all UBX frame. [Fixed header(2bytes), CLS(1byte), ID(1byte), length(2bytes), payload(x bytes), checksums(2bytes)]
+	// uint16_t ubxFrameCounter;			  //It counts all UBX frame. [Fixed header(2bytes), CLS(1byte), ID(1byte), length(2bytes), payload(x bytes), checksums(2bytes)]
 
-	uint8_t rollingChecksumA; //Rolls forward as we receive incoming bytes. Checked against the last two A/B checksum bytes
-	uint8_t rollingChecksumB; //Rolls forward as we receive incoming bytes. Checked against the last two A/B checksum bytes
+	// uint8_t rollingChecksumA; //Rolls forward as we receive incoming bytes. Checked against the last two A/B checksum bytes
+	// uint8_t rollingChecksumB; //Rolls forward as we receive incoming bytes. Checked against the last two A/B checksum bytes
 
 	//Create bit field for staleness of each datum in PVT we want to monitor
 	// moduleQueried.latitude goes true each time we call getPVT()
 	//This reduces the number of times we have to call getPVT as this can take up to ~1s per read
 	//depending on update rate
-	struct
-	{
+	// struct
+	// {
 		// uint32_t gpsiTOW : 1;
 		// uint32_t gpsYear : 1;
 		// uint32_t gpsMonth : 1;
@@ -1111,12 +1111,12 @@ private:
 		// uint32_t gpsTimeValid : 1;
 		// uint32_t gpsNanosecond : 1;
 
-		uint32_t all : 1;
+		// uint32_t all : 1;
 		// uint32_t gnssFixOk : 1;
 		// uint32_t diffSoln : 1;
 		// uint32_t headVehValid : 1;
-		uint32_t longitude : 1;
-		uint32_t latitude : 1;
+		// uint32_t longitude : 1;
+		// uint32_t latitude : 1;
 		// uint32_t altitude : 1;
 		// uint32_t altitudeMSL : 1;
 		// uint32_t horizontalAccEst : 1;
@@ -1136,24 +1136,24 @@ private:
 		// uint32_t headVeh : 1;
 		// uint32_t magDec : 1;
 		// uint32_t magAcc : 1;
-		uint32_t versionNumber : 1;
-	} moduleQueried;
+		// uint32_t versionNumber : 1;
+	// } moduleQueried;
 
 	struct
 	{
-		uint16_t all : 1;
-		uint16_t timeOfWeek : 1;
+		// uint16_t all : 1;
+		// uint16_t timeOfWeek : 1;
 		uint16_t highResLatitude : 1;
 		uint16_t highResLongitude : 1;
-		uint16_t elipsoid : 1;
-		uint16_t meanSeaLevel : 1;
-		uint16_t geoidSeparation : 1; // Redundant but kept for backward-compatibility
-		uint16_t horizontalAccuracy : 1;
-		uint16_t verticalAccuracy : 1;
-		uint16_t elipsoidHp : 1;
-		uint16_t meanSeaLevelHp : 1;
-		uint16_t highResLatitudeHp : 1;
-		uint16_t highResLongitudeHp : 1;
+		// uint16_t elipsoid : 1;
+		// uint16_t meanSeaLevel : 1;
+		// uint16_t geoidSeparation : 1; // Redundant but kept for backward-compatibility
+		// uint16_t horizontalAccuracy : 1;
+		// uint16_t verticalAccuracy : 1;
+		// uint16_t elipsoidHp : 1;
+		// uint16_t meanSeaLevelHp : 1;
+		// uint16_t highResLatitudeHp : 1;
+		// uint16_t highResLongitudeHp : 1;
 	} highResModuleQueried;
 
 //   struct
@@ -1168,11 +1168,11 @@ private:
 //     uint16_t eastingDOP : 1;
 //   } dopModuleQueried;
 
-	boolean hnrAttQueried;
+	// boolean hnrAttQueried;
 	// boolean hnrDynQueried;
 	// boolean hnrPVTQueried;
 
-	uint16_t rtcmLen = 0;
+	// uint16_t rtcmLen = 0;
 };
 
 #endif
