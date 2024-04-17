@@ -29,6 +29,14 @@ float curr_longitude  = 0;
 float curr_latitude   = 0;
 long lastTime   = 0;
 
+/* angle_to_x_pos():
+* Given some input number, update the distance data the user will see:
+*
+*                 "Distance: <distance_data>m"
+*
+* Params: 
+*     - long distance_data: the distance in meters we'd like to show on the screen
+*/
 void display_distance_data(long distance_data) {
   int text_length = 15;
   // display.clearDisplay();
@@ -178,34 +186,25 @@ void display_data(float curr_latitude, float curr_longitude) {
 void setup() {
   // Serial.begin(9600);
   // while(!Serial){}
-  // Serial.println("------------------------------setup------------------------------");
   
   pinMode(LED_BUILTIN, OUTPUT);
   Wire.begin();         // join i2c bus (address optional for master)
 
   //-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     // Serial.println(F("SSD1306 allocation failed"));
     while(true){}; //proceed, loop forever
   }
   display.clearDisplay(); // Clear the buffer
-  // display.display();
+
 
   // -------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
   if (myGPS.begin() == false) {
     // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-    while (1) {
-      digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(1000);                       // wait for a second
-      digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      delay(1000);                       // wait for a second
-    }
+    while (1) {}
   }
-
-  
 
 }
 
@@ -219,15 +218,6 @@ void loop() {
 
   // take GPS data once every second
   if (millis() - lastTime > 1000) {
-    // SFE_UBLOX_GPS myGPS;
-    // myGPS.begin();
-    // Serial.println("inside gps update");
-    // lastTime = millis(); //Update the timer
-    
-    // 4010716164997774, -8822859195374717
-    // curr_latitude = 401071616;
-    // curr_longitude = -882285919;
-
     curr_latitude = myGPS.getLatitude();
     // Serial.print(F("Lat: "));
     // Serial.println(curr_latitude);
@@ -235,31 +225,10 @@ void loop() {
     curr_longitude = myGPS.getLongitude();
     // Serial.print(F("Long: "));
     // Serial.println(curr_longitude);
-
-    // curr_heading = myGPS.getHeading();
-    // Serial.print(F("Heading: "));
-    // Serial.print(curr_heading);
-    // Serial.println(" ");
-
-    // Serial.println("----------------");
   }
 
-  // Serial.println(curr_longitude===
-  
-
-// 40109742224700966, -8824001914554178
-  // curr_latitude = 401097422;
-  // curr_longitude = -882400191;
-
-  // curr_heading = 0;
+  // update display given our new gps coords
   display_data(curr_latitude, curr_longitude);
-
-  // Serial.println("end loop");
-
-  // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  // delay(1000);                       // wait for a second
-  // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  // delay(1000);                       // wait for a second
 
 }
 
