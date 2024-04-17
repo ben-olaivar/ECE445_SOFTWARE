@@ -7,22 +7,23 @@
 
 // constants won't change. They're used here to set pin numbers:
 //pin mappings defined in pin.h
-const int down_button_pin   = pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
-const int up_button_pin     = pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
-const int one_button_pin    = pushbutton_1;     // the port mapping of the "1"    pushbutton pin
-const int two_button_pin    = pushbutton_2;     // the port mapping of the "2"    pushbutton pin
-const int three_button_pin  = pushbutton_3;     // the port mapping of the "3"    pushbutton pin
-const int four_button_pin   = pushbutton_4;     // the port mapping of the "4"    pushbutton pin
-const int five_button_pin   = pushbutton_5;     // the port mapping of the "5"    pushbutton pin
-const int six_button_pin    = pushbutton_6;     // the port mapping of the "6"    pushbutton pin
-const int seven_button_pin  = pushbutton_7;     // the port mapping of the "7"    pushbutton pin
-const int eight_button_pin  = pushbutton_8;     // the port mapping of the "8"    pushbutton pin
-const int nine_button_pin   = pushbutton_9;     // the port mapping of the "9"    pushbutton pin
-const int zero_button_pin   = pushbutton_0;     // the port mapping of the "0"    pushbutton pin
-const int dot_button_pin    = pushbutton_dot;   // the port mapping of the "DOT"  pushbutton pin
-const int enter_button_pin  = pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+const int enter_button_pin  = 2;// pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+const int down_button_pin   = 3;// pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+const int up_button_pin     = 4;// pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+const int one_button_pin    = 9;// pushbutton_1;     // the port mapping of the "1"    pushbutton pin
+const int two_button_pin    = 8;// pushbutton_2;     // the port mapping of the "2"    pushbutton pin
+const int three_button_pin  = 7;// pushbutton_3;     // the port mapping of the "3"    pushbutton pin
+const int four_button_pin   = 6;// pushbutton_4;     // the port mapping of the "4"    pushbutton pin
+const int five_button_pin   = 5;// pushbutton_5;     // the port mapping of the "5"    pushbutton pin
+// const int six_button_pin    = ;// pushbutton_6;     // the port mapping of the "6"    pushbutton pin
+// const int seven_button_pin  = ;// pushbutton_7;     // the port mapping of the "7"    pushbutton pin
+// const int eight_button_pin  = ;// pushbutton_8;     // the port mapping of the "8"    pushbutton pin
+// const int nine_button_pin   = ;// pushbutton_9;     // the port mapping of the "9"    pushbutton pin
+// const int zero_button_pin   = ;// pushbutton_0;     // the port mapping of the "0"    pushbutton pin
+// const int dot_button_pin    = ;// pushbutton_dot;   // the port mapping of the "DOT"  pushbutton pin
 
 // variables will change:
+int enter_button_state  = 0;    // variable for reading the "ENTER" pushbutton status
 int down_button_state   = 0;    // variable for reading the "DOWN"  pushbutton status
 int up_button_state     = 0;    // variable for reading the "UP"    pushbutton status
 int one_button_state    = 0;    // variable for reading the "ONE"   pushbutton status
@@ -30,13 +31,12 @@ int two_button_state    = 0;    // variable for reading the "TWO"   pushbutton s
 int three_button_state  = 0;    // variable for reading the "THREE" pushbutton status
 int four_button_state   = 0;    // variable for reading the "FOUR"  pushbutton status
 int five_button_state   = 0;    // variable for reading the "FIVE"  pushbutton status
-int six_button_state    = 0;    // variable for reading the "SIX"   pushbutton status
-int seven_button_state  = 0;    // variable for reading the "SEVEN" pushbutton status
-int eight_button_state  = 0;    // variable for reading the "EIGHT" pushbutton status
-int nine_button_state   = 0;    // variable for reading the "NINE"  pushbutton status
-int zero_button_state   = 0;    // variable for reading the "ZERO"  pushbutton status
-int dot_button_state    = 0;    // variable for reading the "DOT"   pushbutton status
-int enter_button_state  = 0;    // variable for reading the "ENTER" pushbutton status
+// int six_button_state    = 0;    // variable for reading the "SIX"   pushbutton status
+// int seven_button_state  = 0;    // variable for reading the "SEVEN" pushbutton status
+// int eight_button_state  = 0;    // variable for reading the "EIGHT" pushbutton status
+// int nine_button_state   = 0;    // variable for reading the "NINE"  pushbutton status
+// int zero_button_state   = 0;    // variable for reading the "ZERO"  pushbutton status
+// int dot_button_state    = 0;    // variable for reading the "DOT"   pushbutton status
 
 int should_menu_change = 0;     // do we want to change what is being displayed
 int menu_type = 0;             // the current menu being displayed
@@ -46,16 +46,23 @@ int set_freq_row_num = 1;      // keep track of the set frequency row number
 float t_frequency = 0.0;            // the current frequency 
 
 void setup() {
-  Serial.begin(9600);   // open the serial port at 9600 bps:
-  while(!Serial);       // wait for serial to start
+  // Serial.begin(9600);   // open the serial port at 9600 bps:
+  // while(!Serial);       // wait for serial to start
 
-  Serial.println("");
-  Serial.println("--------------MENU--------------");
-  Serial.println("> Compass <");
-  Serial.println("Frequency Change");
+  // Serial.println("");
+  // Serial.println("--------------MENU--------------");
+  // Serial.println("> Compass <");
+  // Serial.println("Frequency Change");
 
   // initialize the pushbutton pin as an input:
+  pinMode(enter_button_pin, INPUT);
   pinMode(down_button_pin, INPUT);
+  pinMode(up_button_pin, INPUT);
+  pinMode(one_button_pin, INPUT);
+  pinMode(two_button_pin, INPUT);
+  pinMode(three_button_pin, INPUT);
+  pinMode(four_button_pin, INPUT);
+  pinMode(five_button_pin, INPUT);
 
 }
 
@@ -68,34 +75,34 @@ void set_frequency(float t_freq) {
 // 0 = default (select 'compass')
 // 1 = select frequency change
 void print_menu(int m_type) {
-  Serial.println("");
-  Serial.println("--------------MENU--------------");
+  // Serial.println("");
+  // Serial.println("--------------MENU--------------");
 
   switch (m_type) {
     case 0: // This is main menu selected Compass
-        Serial.println("> Compass <");
-        Serial.println("Frequency Change");
+        // Serial.println("> Compass <");
+        // Serial.println("Frequency Change");
         break;
     case 1: // Main menu selected Frequency Change
-        Serial.println("Compass");
-        Serial.println("> Frequency Change <");
+        // Serial.println("Compass");
+        // Serial.println("> Frequency Change <");
         break;  
     case 2: // This is sub menu of selected Compass
-        Serial.println("Relevant Information:");
-        Serial.println("> Back  <"); // this to mimic enter button
+        // Serial.println("Relevant Information:");
+        // Serial.println("> Back  <"); // this to mimic enter button
         break;
     case 3: // This is sub menu of selected Frequency Change
-        Serial.println(t_frequency);
-        Serial.println("> Set Frequency: <");
-        Serial.println(" Back ");
+        // Serial.println(t_frequency);
+        // Serial.println("> Set Frequency: <");
+        // Serial.println(" Back ");
         break;  
     case 4: // This is sub menu of selected Frequency Change
-        Serial.println(t_frequency);
-        Serial.println("Set Frequency:");
-        Serial.println("> Back <");
+        // Serial.println(t_frequency);
+        // Serial.println("Set Frequency:");
+        // Serial.println("> Back <");
         break;  
     case 5: // This is sub menu of Set Frequency Change
-        Serial.println("Set Frequency:");
+        // Serial.println("Set Frequency:");
         break;
     default:
         break;
@@ -140,12 +147,15 @@ void executeAction(){
 void loop() {
   // Serial.println(menu_state);
   // read the state of the pushbutton value:
-  down_button_state = digitalRead(down_button_pin);
-  up_button_state   = digitalRead(up_button_pin);
-  enter_button_state = digitalRead(enter_button_pin);
+  down_button_state   = digitalRead(down_button_pin);
+  up_button_state     = digitalRead(up_button_pin);
+
+  enter_button_state  = digitalRead(enter_button_pin);
+
 
 
   // check if the pushbutton is pressed. If it is, the down_button_state is HIGH:
+    //!-----------------------DOWN-----------------------
     if (down_button_state != LOW) {
         down_button_state = LOW;
         if ((menu_type == 0 || menu_type == 1) && main_m_row_num == 0){ // if we are at the main menu and the first row
@@ -157,6 +167,8 @@ void loop() {
             menu_type = 4; //menu type 3 & 4 to set frequency - 4 is to highlight the back button
             print_menu(menu_type);
         }
+
+    //!-----------------------UP-----------------------
     } else if (up_button_state != LOW) {
         up_button_state = LOW;
         if ((menu_type == 0 || menu_type == 1) && main_m_row_num == 1){ // if we are at the main menu and the second row
@@ -168,9 +180,11 @@ void loop() {
             menu_type = 3; //menu type 3 & 4 to set frequency - 3 is to highlight set frequency
             print_menu(menu_type);
         }
+
+    //!-----------------------ENTER-----------------------
     } else if (enter_button_state != LOW) {
         enter_button_state = LOW;
         executeAction();
-
+        while(digitalRead(enter_button_pin));
     } 
 }
