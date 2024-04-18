@@ -29,6 +29,7 @@ float curr_longitude  = 0;
 float curr_latitude   = 0;
 long lastTime   = 0;
 
+//!------------------------BEGIN COMPASS DISPLAY------------------------
 /* angle_to_x_pos():
 * Given some input number, update the distance data the user will see:
 *
@@ -179,57 +180,257 @@ void display_data(float curr_latitude, float curr_longitude) {
 
   // Upload to display
   display.display();
-  // Serial.println("end of display data");
 
 }
+//!------------------------END COMPASS DISPLAY------------------------
+
+
+
+
+
+
+//TODO:------------------------BEGIN MENU DISPLAY------------------------
+int menu_type = -1;
+const int menu_button_pin   = 2;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+const int enter_button_pin  = 3;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+const int down_button_pin   = 4;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+const int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+
+int menu_button_state   = 0;      // variable for reading the "ENTER" pushbutton status
+int enter_button_state  = 0;      // variable for reading the "ENTER" pushbutton status
+int down_button_state   = 0;      // variable for reading the "DOWN"  pushbutton status
+int up_button_state     = 0;      // variable for reading the "UP"    pushbutton status
+
+
+void display_menu(int m_type) {
+  //Start of Display Menu
+  Serial.println("before m_type catch");
+  if (m_type == menu_type) {
+    return;
+  }
+  Serial.println("after m_type catch");
+  //Start of Display Menu
+
+  display.clearDisplay(); // clear buffer memory
+
+  int text_length = 80;
+  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextColor(SSD1306_WHITE); // Draw white text
+  display.setCursor(0, 0);     // Start at top-left corner
+  display.cp437(true);         // Use full 256 char 'Code Page 437' font
+
+  char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
+  String row_1 = "";
+  String row_2 = "";
+  String row_3 = "";
+  String display_string = "";
+
+  switch (m_type) {
+    case 0: // This is main menu selected Compass
+      row_1 = "-------MENU-------\n";
+      row_2 = "> Compass <\n";
+      row_3 = "Frequency Change";
+
+      break;
+
+    case 1: // Main menu selected Frequency Change
+      row_1 = "-------MENU-------\n";
+      row_2 = "Compass\n";
+      row_3 = "> Frequency Change <";
+
+
+      break;
+
+    case 2: // This is sub menu of selected Frequency Change
+      row_1 = "---Freq Change---\n";
+      row_2 = "> Set Frequency: <\n";
+      row_3 = "Back";
+        // t_frequency;
+
+      break;
+
+    case 3: // This is sub menu of selected Frequency Change
+      row_1 = "---Freq Change---\n";
+      row_2 = "Set Frequency:\n";
+      row_3 = "> Back <";
+        // t_frequency;
+
+      break;
+
+    case 4: // This is sub menu of Set Frequency Change
+      row_1 = "-------MENU-------\n";
+      row_2 = "";
+      row_3 = "";
+
+      break;
+
+    default:
+      break;
+  }
+
+  Serial.println("Display String: " + display_string);
+
+  display_string = row_1 + row_2 + row_3;
+  display_string.toCharArray(menu_text, display_string.length() + 1);
+  display.write(menu_text, display_string.length());
+
+  display.display();  // update display from buffer
+
+}
+
+
+
+
+//TODO:------------------------END MENU DISPLAY------------------------
+
+
+
+void compass() {
+
+  //TODO: while(menu button not pressed)
+  while (true) {
+
+    if (millis() - lastTime > 1000) {
+      //grab GPS data
+      curr_latitude = myGPS.getLatitude();
+      // Serial.print(F("Lat: "));
+      // Serial.println(curr_latitude);
+
+      curr_longitude = myGPS.getLongitude();
+      // Serial.print(F("Long: "));
+      // Serial.println(curr_longitude);
+    }
+
+  }
+  display_data(curr_latitude, curr_longitude);  // update display given our new gps coords
+
+}
+
+
 
 void setup() {
   // Serial.begin(9600);
   // while(!Serial){}
-  
-  pinMode(LED_BUILTIN, OUTPUT);
   Wire.begin();         // join i2c bus (address optional for master)
 
-  //-------------------DISPLAY SETUP-------------------
+  //!-------------------MENU SETUP-------------------
+  pinMode(menu_button_pin,  INPUT_PULLUP);
+  pinMode(enter_button_pin, INPUT_PULLUP);
+  pinMode(down_button_pin,  INPUT_PULLUP);
+  pinMode(up_button_pin,    INPUT_PULLUP);
+
+
+
+  //!-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     // Serial.println(F("SSD1306 allocation failed"));
     while(true){}; //proceed, loop forever
   }
-  display.clearDisplay(); // Clear the buffer
+  // display.clearDisplay(); // Clear the buffer
 
 
-  // -------------------GPS SETUP-------------------
+  //!-------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
-  if (myGPS.begin() == false) {
-    // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-    while (1) {}
-  }
+  // if (myGPS.begin() == false) {
+  //   // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+  //   while (1) {}
+  // }
 
+  // start with the top (base) menu (menu 0)
+  compass();
+  delay(100);
+  // display_menu(0);
+  while(1){};
+  menu_type = 0;
+  delay(100);
 }
 
 
 
 
-
 void loop() {
+  menu_button_state   = !digitalRead(menu_button_pin);
+  enter_button_state  = !digitalRead(enter_button_pin);
+  up_button_state     = !digitalRead(up_button_pin);
+  down_button_state   = !digitalRead(down_button_pin);
 
-  // Serial.println("Start of loop");
+  // Serial.println("menu_button_state: " + String(menu_button_state));
+  // Serial.println("enter_button_state: " + String(enter_button_state));
+  // Serial.println("up_button_state: " + String(up_button_state));
+  // Serial.println("down_button_state: " + String(down_button_state));
+  // Serial.println("------------------------------------");
 
-  // take GPS data once every second
-  if (millis() - lastTime > 1000) {
-    curr_latitude = myGPS.getLatitude();
-    // Serial.print(F("Lat: "));
-    // Serial.println(curr_latitude);
+  // 0 = base menu (compass selected)
+  // 1 = base menu (frequency change selected)
+  // 2 = frequency change menu (set frequency selected)
+  // 3 = frequency change menu (back selected)
 
-    curr_longitude = myGPS.getLongitude();
-    // Serial.print(F("Long: "));
-    // Serial.println(curr_longitude);
+
+  //!-----------------------MENU-----------------------
+  if (menu_button_state == 1) {  // Display default menu
+    // Serial.println("Menu button pressed");
+    menu_type = 0;
+    display_menu(0);
   }
 
-  // update display given our new gps coords
-  display_data(curr_latitude, curr_longitude);
 
+  //!-----------------------ENTER-----------------------
+  else if (enter_button_state == 1) {
+    // Serial.println("Enter button pressed");
+
+    if (menu_type == 0) {       // display compass
+      // display compass
+    }
+    else if (menu_type == 1) {  // enter frequency change sub-menu 
+      menu_type = 2;
+      display_menu(2);
+    }
+    else if (menu_type == 2) {  // change frequency function
+      // user-input frequency
+      // press enter again
+      // change frequency
+    }
+    else if (menu_type == 3) {  // 'back' go back to main menu
+      menu_type = 0;
+      display_menu(0);
+    }
+  }
+
+
+
+  //!-----------------------UP-----------------------
+  else if (up_button_state == 1) {
+    // Serial.println("UP button pressed");
+    
+    if (menu_type == 1) {  // enter frequency change sub-menu 
+      menu_type = 0;
+      display_menu(1);
+    }
+    else if (menu_type == 3) {  // 'back' go back to main menu
+      menu_type = 2;
+      display_menu(2);
+    }
+  }
+
+
+
+
+  //!-----------------------DOWN-----------------------
+  else if (down_button_state == 1) {
+    // Serial.println("Down button pressed");
+    // Serial.println(menu_type);
+    if (menu_type == 0) {  // enter frequency change sub-menu 
+      menu_type = 1;
+      display_menu(1);
+    }
+    else if (menu_type == 2) {  // 'back' go back to main menu
+      menu_type = 3;
+      display_menu(3);
+    }
+  }
+
+  
 }
 
 
