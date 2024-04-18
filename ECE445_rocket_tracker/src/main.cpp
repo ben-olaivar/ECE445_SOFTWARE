@@ -8,6 +8,8 @@
 #include <Adafruit_SSD1306.h>
 #include <string.h>
 #include <TinyGPSPlus.h>
+#include <LoRa.h>
+#include <RH_RF95.h>
 
 
 
@@ -212,10 +214,7 @@ void compass() {
 
 
 
-
-
-
-//TODO:------------------------BEGIN MENU DISPLAY------------------------
+//!------------------------BEGIN MENU DISPLAY------------------------
 
 void display_menu(int m_type) {
 
@@ -289,11 +288,18 @@ void display_menu(int m_type) {
 }
 
 
+//!------------------------END MENU DISPLAY------------------------
 
 
-//TODO:------------------------END MENU DISPLAY------------------------
+
+//!------------------------BEGIN RADIO DISPLAY------------------------
+#define RF95_FREQ 434.0
+#define RFM96_RST 4
+
+RH_RF95 radio;
 
 
+//!------------------------END RADIO DISPLAY------------------------
 
 
 
@@ -325,6 +331,18 @@ void setup() {
   // Connect to the Ublox module using Wire port
   if (myGPS.begin() == false) {
     // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+    while (1) {}
+  }
+
+  //!-------------------RADIO SETUP-------------------
+  if (!radio.init()) {
+    // return ErrorCode::RADIO_INIT_FAILED;
+    // Serial.println("Radio init failed");
+    while (1) {}
+  }
+  if (!radio.setFrequency(RF95_FREQ)) {
+    // return ErrorCode::RADIO_SET_FREQUENCY_FAILED;
+    // Serial.println("Radio init failed");
     while (1) {}
   }
 
