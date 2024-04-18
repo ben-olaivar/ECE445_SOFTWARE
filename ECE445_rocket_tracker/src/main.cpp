@@ -29,6 +29,20 @@ float curr_longitude  = 0;
 float curr_latitude   = 0;
 long lastTime   = 0;
 
+// Menu setup
+int menu_type = -1;
+const int menu_button_pin   = 2;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+const int enter_button_pin  = 3;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+const int down_button_pin   = 4;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+const int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+
+int menu_button_state   = 0;      // variable for reading the "ENTER" pushbutton status
+int enter_button_state  = 0;      // variable for reading the "ENTER" pushbutton status
+int down_button_state   = 0;      // variable for reading the "DOWN"  pushbutton status
+int up_button_state     = 0;      // variable for reading the "UP"    pushbutton status
+
+
+
 //!------------------------BEGIN COMPASS DISPLAY------------------------
 /* angle_to_x_pos():
 * Given some input number, update the distance data the user will see:
@@ -40,12 +54,10 @@ long lastTime   = 0;
 */
 void display_distance_data(long distance_data) {
   int text_length = 15;
-  // display.clearDisplay();
-  // Serial.println(distance_data);
-  display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(35, 0);     // Start at top-left corner
-  display.cp437(true);         // Use full 256 char 'Code Page 437' font
+  display.setTextSize(1);               // Normal 1:1 pixel scale
+  display.setTextColor(SSD1306_WHITE);  // Draw white text
+  display.setCursor(35, 0);             // Start at top-left corner
+  display.cp437(true);                  // Use full 256 char 'Code Page 437' font
 
   char distance_text[text_length] = "Distance: ";
   String distance = "Distance: " + String(distance_data) + "m";
@@ -54,9 +66,6 @@ void display_distance_data(long distance_data) {
   for (int letter = 0; letter < text_length; letter++) {
     display.write(distance_text[letter]);
   }
-
-
-  // display.display();
 }
 
 /* angle_to_x_pos():
@@ -167,8 +176,9 @@ void display_data(float curr_latitude, float curr_longitude) {
 
   curr_latitude  = curr_latitude  / 10000000.0; // getting from the form xxxxxxxxx to xx.xxxxxxx
   curr_longitude = curr_longitude / 10000000.0;
-  float target_latitude  = 401066500 / 10000000.0;   //TODO: Remove these
-  float target_longitude = -882271760 / 10000000.0;  //TODO: Remove these
+  // 40.11450311099257, -8822732977554023
+  float target_latitude  = 401145031 / 10000000.0;   //TODO: Remove these
+  float target_longitude = -882273297 / 10000000.0;  //TODO: Remove these
 
   // First put arrow into screen memory (Left side of screen)
   drawCompass(curr_latitude, curr_longitude, target_latitude, target_longitude);
@@ -182,6 +192,22 @@ void display_data(float curr_latitude, float curr_longitude) {
   display.display();
 
 }
+
+
+
+void compass() {
+
+  //TODO: while(menu button not pressed)
+  while (true) {
+    if (millis() - lastTime > 1000) {       // grab GPS data every 1 second
+      curr_latitude = myGPS.getLatitude();
+      curr_longitude = myGPS.getLongitude();
+      display_data(curr_latitude, curr_longitude);  // update display given our new gps coords
+    }
+
+  }
+
+}
 //!------------------------END COMPASS DISPLAY------------------------
 
 
@@ -190,35 +216,16 @@ void display_data(float curr_latitude, float curr_longitude) {
 
 
 //TODO:------------------------BEGIN MENU DISPLAY------------------------
-int menu_type = -1;
-const int menu_button_pin   = 2;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-const int enter_button_pin  = 3;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-const int down_button_pin   = 4;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
-const int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
-
-int menu_button_state   = 0;      // variable for reading the "ENTER" pushbutton status
-int enter_button_state  = 0;      // variable for reading the "ENTER" pushbutton status
-int down_button_state   = 0;      // variable for reading the "DOWN"  pushbutton status
-int up_button_state     = 0;      // variable for reading the "UP"    pushbutton status
-
 
 void display_menu(int m_type) {
-  //Start of Display Menu
-  Serial.println("before m_type catch");
-  if (m_type == menu_type) {
+
+  if (m_type == menu_type) {  // don't waste time displaying the same menu
     return;
   }
-  Serial.println("after m_type catch");
-  //Start of Display Menu
 
-  display.clearDisplay(); // clear buffer memory
+  display.clearDisplay();       // clear buffer memory
 
   int text_length = 80;
-  display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(0, 0);     // Start at top-left corner
-  display.cp437(true);         // Use full 256 char 'Code Page 437' font
-
   char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
   String row_1 = "";
   String row_2 = "";
@@ -258,9 +265,7 @@ void display_menu(int m_type) {
       break;
 
     case 4: // This is sub menu of Set Frequency Change
-      row_1 = "-------MENU-------\n";
-      row_2 = "";
-      row_3 = "";
+      compass();
 
       break;
 
@@ -268,11 +273,16 @@ void display_menu(int m_type) {
       break;
   }
 
-  Serial.println("Display String: " + display_string);
+  // Serial.println("Display String: " + display_string);
 
   display_string = row_1 + row_2 + row_3;
-  display_string.toCharArray(menu_text, display_string.length() + 1);
-  display.write(menu_text, display_string.length());
+
+  display.setTextSize(1);               // Normal 1:1 pixel scale
+  display.setTextColor(SSD1306_WHITE);  // Draw white text
+  display.setCursor(0, 0);              // Start at top-left corner
+  display.cp437(true);                  // Use full 256 char 'Code Page 437' font
+  display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
+  display.write(menu_text, display_string.length());  // put string into buffer memory
 
   display.display();  // update display from buffer
 
@@ -285,26 +295,7 @@ void display_menu(int m_type) {
 
 
 
-void compass() {
 
-  //TODO: while(menu button not pressed)
-  while (true) {
-
-    if (millis() - lastTime > 1000) {
-      //grab GPS data
-      curr_latitude = myGPS.getLatitude();
-      // Serial.print(F("Lat: "));
-      // Serial.println(curr_latitude);
-
-      curr_longitude = myGPS.getLongitude();
-      // Serial.print(F("Long: "));
-      // Serial.println(curr_longitude);
-    }
-
-  }
-  display_data(curr_latitude, curr_longitude);  // update display given our new gps coords
-
-}
 
 
 
@@ -327,23 +318,19 @@ void setup() {
     // Serial.println(F("SSD1306 allocation failed"));
     while(true){}; //proceed, loop forever
   }
-  // display.clearDisplay(); // Clear the buffer
+  display.clearDisplay(); // Clear the buffer
 
 
   //!-------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
-  // if (myGPS.begin() == false) {
-  //   // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-  //   while (1) {}
-  // }
+  if (myGPS.begin() == false) {
+    // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+    while (1) {}
+  }
 
   // start with the top (base) menu (menu 0)
-  compass();
-  delay(100);
-  // display_menu(0);
-  while(1){};
+  display_menu(0);
   menu_type = 0;
-  delay(100);
 }
 
 
@@ -355,12 +342,6 @@ void loop() {
   up_button_state     = !digitalRead(up_button_pin);
   down_button_state   = !digitalRead(down_button_pin);
 
-  // Serial.println("menu_button_state: " + String(menu_button_state));
-  // Serial.println("enter_button_state: " + String(enter_button_state));
-  // Serial.println("up_button_state: " + String(up_button_state));
-  // Serial.println("down_button_state: " + String(down_button_state));
-  // Serial.println("------------------------------------");
-
   // 0 = base menu (compass selected)
   // 1 = base menu (frequency change selected)
   // 2 = frequency change menu (set frequency selected)
@@ -370,8 +351,8 @@ void loop() {
   //!-----------------------MENU-----------------------
   if (menu_button_state == 1) {  // Display default menu
     // Serial.println("Menu button pressed");
-    menu_type = 0;
     display_menu(0);
+    menu_type = 0;
   }
 
 
@@ -381,10 +362,13 @@ void loop() {
 
     if (menu_type == 0) {       // display compass
       // display compass
+      // display.clearDisplay();
+      display_menu(4);
+      // compass();
     }
     else if (menu_type == 1) {  // enter frequency change sub-menu 
-      menu_type = 2;
       display_menu(2);
+      menu_type = 2;
     }
     else if (menu_type == 2) {  // change frequency function
       // user-input frequency
@@ -392,9 +376,11 @@ void loop() {
       // change frequency
     }
     else if (menu_type == 3) {  // 'back' go back to main menu
-      menu_type = 0;
       display_menu(0);
+      delay(300);
+      menu_type = 0;
     }
+
   }
 
 
@@ -404,12 +390,12 @@ void loop() {
     // Serial.println("UP button pressed");
     
     if (menu_type == 1) {  // enter frequency change sub-menu 
+      display_menu(0);
       menu_type = 0;
-      display_menu(1);
     }
     else if (menu_type == 3) {  // 'back' go back to main menu
-      menu_type = 2;
       display_menu(2);
+      menu_type = 2;
     }
   }
 
@@ -421,12 +407,12 @@ void loop() {
     // Serial.println("Down button pressed");
     // Serial.println(menu_type);
     if (menu_type == 0) {  // enter frequency change sub-menu 
-      menu_type = 1;
       display_menu(1);
+      menu_type = 1;
     }
     else if (menu_type == 2) {  // 'back' go back to main menu
-      menu_type = 3;
       display_menu(3);
+      menu_type = 3;
     }
   }
 
