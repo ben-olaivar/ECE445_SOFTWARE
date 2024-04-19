@@ -8,8 +8,8 @@
 #include <Adafruit_SSD1306.h>
 #include <string.h>
 #include <TinyGPSPlus.h>
-#include <LoRa.h>
-#include <RH_RF95.h>
+// #include <LoRa.h>
+// #include <RH_RF95.h>
 
 
 
