@@ -345,6 +345,13 @@ void setup() {
     while (1) {}
   }
 
+  /*
+  * The default transmitter power is 13dBm, using PA_BOOST.
+  * If you are using RFM95/96/97/98 modules which uses the PA_BOOST
+  * transmitter pin, then you can set transmitter powers from 5 to 23 dBm:
+  */
+  radio.setTxPower(6, false);
+
   // start with the top (base) menu (menu 0)
   display_menu(0);
   menu_type = 0;
