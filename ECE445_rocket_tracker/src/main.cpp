@@ -133,7 +133,7 @@ void loop() {
 #define RFM95_INT 3
 #define RFM95_CS 8
 
-RH_RF95 radio(RFM95_CS, RFM95_INT);
+RH_RF95 radio;
 
 long cur_long;
 long cur_lat;
@@ -181,27 +181,26 @@ void setup() {
 }
 
 void loop() {
-
-Serial.begin(115200);
-
-if (radio.available())
-{
-
-  uint8_t buf[RH_RF95_MAX_MESSAGE_LEN]; // maybe make smaller if needed (255-4 bytes currently)
-  uint8_t len = sizeof(buf);
-
-  if (radio.recv(buf, &len))
+  Serial.println("loop");
+  if (radio.available())
   {
-    // example does display tap here fwiw
+    Serial.println("------------------------------------------");
 
-    uint8_t data[] = "And hello to back to you fdhjdjf";
-    radio.send(data, sizeof(data));
-    radio.waitPacketSent();
-    delay(1000);
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN]; // maybe make smaller if needed (255-4 bytes currently)
+    uint8_t len = sizeof(buf);
+
+    if (radio.recv(buf, &len))
+    {
+      // example does display tap here fwiw
+
+      uint8_t data[] = "And hello to back to you fdhjdjf";
+      radio.send(data, sizeof(data));
+      radio.waitPacketSent();
+      delay(1000);
+
+    }
 
   }
-
-}
 
 }
 
