@@ -807,9 +807,9 @@ public:
 	// bool gpsDateValid;
 	// bool gpsTimeValid;
 
-	bool gnssFixOk;      //valid fix (i.e within DOP & accuracy masks)
-	bool diffSoln;       //Differential corrections were applied
-	bool headVehValid;
+	// bool gnssFixOk;      //valid fix (i.e within DOP & accuracy masks)
+	// bool diffSoln;       //Differential corrections were applied
+	// bool headVehValid;
 	int32_t latitude;		 //Degrees * 10^-7 (more accurate than floats)
 	int32_t longitude;		 //Degrees * 10^-7 (more accurate than floats)
 	// int32_t altitude;		 //Number of mm above ellipsoid
@@ -826,8 +826,8 @@ public:
 	// int32_t headingOfMotion; //degrees * 10^-5
 	// uint32_t speedAccEst;
 	// uint32_t headingAccEst;
-	uint16_t pDOP;			 //Positional dilution of precision * 10^-2 (dimensionless)
-	bool invalidLlh;
+	// uint16_t pDOP;			 //Positional dilution of precision * 10^-2 (dimensionless)
+	// bool invalidLlh;
 	// int32_t headVeh;
 	// int16_t magDec;
 	// uint16_t magAcc;
@@ -968,9 +968,9 @@ public:
 		// boolean validTime;
 		// boolean fullyResolved;
 		// int32_t nano;
-		uint8_t gpsFix;
-		boolean gpsFixOK;
-		boolean diffSoln;
+		// uint8_t gpsFix;
+		// boolean gpsFixOK;
+		// boolean diffSoln;
 		// boolean WKNSET;
 		// boolean TOWSET;
 		boolean headVehValid;
@@ -1513,12 +1513,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // then we can be confident that the data in outgoingUBX is valid
       if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->cls == requestedClass) && (outgoingUBX->id == requestedID))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: valid data and valid ACK received after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: valid data and valid ACK received after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_DATA_RECEIVED); //We received valid data and a correct ACK!
       }
 
@@ -1529,12 +1529,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // as these may have been changed by a PVT packet.
       else if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: no data and valid ACK after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: no data and valid ACK after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_DATA_SENT); //We got an ACK but no data...
       }
 
@@ -1547,12 +1547,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // Note: the addition of packetBuf should make this check redundant!
       else if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && ((outgoingUBX->cls != requestedClass) || (outgoingUBX->id != requestedID)))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: data being OVERWRITTEN after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: data being OVERWRITTEN after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_DATA_OVERWRITTEN); // Data was valid but has been or is being overwritten
       }
 
@@ -1560,12 +1560,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // are NOT_VALID then we can be confident we have had a checksum failure on the data packet
       else if ((packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_VALID) && (outgoingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_NOT_VALID))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: CRC failed after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: CRC failed after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_CRC_FAIL); //Checksum fail
       }
 
@@ -1578,12 +1578,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // Note: the addition of packetBuf changes the logic of this, but we'll leave the code as is for now.
       else if (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_NOTACKNOWLEDGED)
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: data was NOTACKNOWLEDGED (NACK) after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: data was NOTACKNOWLEDGED (NACK) after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_COMMAND_NACK); //We received a NACK!
       }
 
@@ -1592,12 +1592,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // If we were playing safe, we should return FAIL instead
       else if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_VALID) && (outgoingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->cls == requestedClass) && (outgoingUBX->id == requestedID))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: VALID data and INVALID ACK received after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: VALID data and INVALID ACK received after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_DATA_RECEIVED); //We received valid data and an invalid ACK!
       }
 
@@ -1605,12 +1605,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // then we return a FAIL. This must be a double checksum failure?
       else if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_VALID) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_VALID))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: INVALID data and INVALID ACK received after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: INVALID data and INVALID ACK received after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_FAIL); //We received invalid data and an invalid ACK!
       }
 
@@ -1618,12 +1618,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
       // then the ACK has not yet been received and we should keep waiting for it
       else if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForACKResponse: valid data after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec. Waiting for ACK."));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForACKResponse: valid data after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec. Waiting for ACK."));
+        // }
       }
 
     } //checkUbloxInternal == true
@@ -1636,21 +1636,21 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForACKResponse(ubxPacket *outgoingUBX, uin
   // even though we did not get an ACK
   if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_DEFINED) && (outgoingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->cls == requestedClass) && (outgoingUBX->id == requestedID))
   {
-    if (_printDebug == true)
-    {
-      _debugSerial->print(F("waitForACKResponse: TIMEOUT with valid data after "));
-      _debugSerial->print(millis() - startTime);
-      _debugSerial->println(F(" msec. "));
-    }
+    // if (_printDebug == true)
+    // {
+    //   _debugSerial->print(F("waitForACKResponse: TIMEOUT with valid data after "));
+    //   _debugSerial->print(millis() - startTime);
+    //   _debugSerial->println(F(" msec. "));
+    // }
     return (SFE_UBLOX_STATUS_DATA_RECEIVED); //We received valid data... But no ACK!
   }
 
-  if (_printDebug == true)
-  {
-    _debugSerial->print(F("waitForACKResponse: TIMEOUT after "));
-    _debugSerial->print(millis() - startTime);
-    _debugSerial->println(F(" msec."));
-  }
+  // if (_printDebug == true)
+  // {
+  //   _debugSerial->print(F("waitForACKResponse: TIMEOUT after "));
+  //   _debugSerial->print(millis() - startTime);
+  //   _debugSerial->println(F(" msec."));
+  // }
 
   return (SFE_UBLOX_STATUS_TIMEOUT);
 }
@@ -1681,12 +1681,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForNoACKResponse(ubxPacket *outgoingUBX, u
       // then we can be confident that the data in outgoingUBX is valid
       if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_VALID) && (outgoingUBX->cls == requestedClass) && (outgoingUBX->id == requestedID))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForNoACKResponse: valid data with CLS/ID match after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForNoACKResponse: valid data with CLS/ID match after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_DATA_RECEIVED); //We received valid data!
       }
 
@@ -1699,12 +1699,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForNoACKResponse(ubxPacket *outgoingUBX, u
       // Note: the addition of packetBuf should make this check redundant!
       else if ((outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID) && ((outgoingUBX->cls != requestedClass) || (outgoingUBX->id != requestedID)))
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForNoACKResponse: data being OVERWRITTEN after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForNoACKResponse: data being OVERWRITTEN after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_DATA_OVERWRITTEN); // Data was valid but has been or is being overwritten
       }
 
@@ -1726,12 +1726,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForNoACKResponse(ubxPacket *outgoingUBX, u
       // If the outgoingUBX->classAndIDmatch is NOT_VALID then we return CRC failure
       else if (outgoingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_NOT_VALID)
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("waitForNoACKResponse: CLS/ID match but failed CRC after "));
-          _debugSerial->print(millis() - startTime);
-          _debugSerial->println(F(" msec"));
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("waitForNoACKResponse: CLS/ID match but failed CRC after "));
+        //   _debugSerial->print(millis() - startTime);
+        //   _debugSerial->println(F(" msec"));
+        // }
         return (SFE_UBLOX_STATUS_CRC_FAIL); //We received invalid data
       }
     }
@@ -1739,12 +1739,12 @@ sfe_ublox_status_e SFE_UBLOX_GPS::waitForNoACKResponse(ubxPacket *outgoingUBX, u
     delayMicroseconds(500);
   }
 
-  if (_printDebug == true)
-  {
-    _debugSerial->print(F("waitForNoACKResponse: TIMEOUT after "));
-    _debugSerial->print(millis() - startTime);
-    _debugSerial->println(F(" msec. No packet received."));
-  }
+  // if (_printDebug == true)
+  // {
+  //   _debugSerial->print(F("waitForNoACKResponse: TIMEOUT after "));
+  //   _debugSerial->print(millis() - startTime);
+  //   _debugSerial->println(F(" msec. No packet received."));
+  // }
 
   return (SFE_UBLOX_STATUS_TIMEOUT);
 }
@@ -1756,21 +1756,21 @@ sfe_ublox_status_e SFE_UBLOX_GPS::sendCommand(ubxPacket *outgoingUBX, uint16_t m
 
   calcChecksum(outgoingUBX); //Sets checksum A and B bytes of the packet
 
-  if (_printDebug == true)
-  {
-    _debugSerial->print(F("\nSending: "));
-    printPacket(outgoingUBX);
-  }
+  // if (_printDebug == true)
+  // {
+  //   _debugSerial->print(F("\nSending: "));
+  //   printPacket(outgoingUBX);
+  // }
 
   if (commType == COMM_TYPE_I2C)
   {
     retVal = sendI2cCommand(outgoingUBX, maxWait);
     if (retVal != SFE_UBLOX_STATUS_SUCCESS)
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->println(F("Send I2C Command failed"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->println(F("Send I2C Command failed"));
+      // }
       return retVal;
     }
   }
@@ -1784,18 +1784,18 @@ sfe_ublox_status_e SFE_UBLOX_GPS::sendCommand(ubxPacket *outgoingUBX, uint16_t m
     //Depending on what we just sent, either we need to look for an ACK or not
     if (outgoingUBX->cls == UBX_CLASS_CFG)
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->println(F("sendCommand: Waiting for ACK response"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->println(F("sendCommand: Waiting for ACK response"));
+      // }
       retVal = waitForACKResponse(outgoingUBX, outgoingUBX->cls, outgoingUBX->id, maxWait); //Wait for Ack response
     }
     else
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->println(F("sendCommand: Waiting for No ACK response"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->println(F("sendCommand: Waiting for No ACK response"));
+      // }
       retVal = waitForNoACKResponse(outgoingUBX, outgoingUBX->cls, outgoingUBX->id, maxWait); //Wait for Ack response
     }
   }
@@ -1823,10 +1823,10 @@ boolean SFE_UBLOX_GPS::checkUbloxI2C(ubxPacket *incomingUBX, uint8_t requestedCl
       if (lsb == 0xFF)
       {
         //I believe this is a u-blox bug. Device should never present an 0xFF.
-        if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
-        {
-          _debugSerial->println(F("checkUbloxI2C: u-blox bug, length lsb is 0xFF"));
-        }
+        // if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
+        // {
+        //   _debugSerial->println(F("checkUbloxI2C: u-blox bug, length lsb is 0xFF"));
+        // }
         if (checksumFailurePin >= 0)
         {
           digitalWrite((uint8_t)checksumFailurePin, LOW);
@@ -1841,10 +1841,10 @@ boolean SFE_UBLOX_GPS::checkUbloxI2C(ubxPacket *incomingUBX, uint8_t requestedCl
 
     if (bytesAvailable == 0)
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->println(F("checkUbloxI2C: OK, zero bytes available"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->println(F("checkUbloxI2C: OK, zero bytes available"));
+      // }
       lastCheck = millis(); //Put off checking to avoid I2C bus traffic
       return (false);
     }
@@ -1857,36 +1857,36 @@ boolean SFE_UBLOX_GPS::checkUbloxI2C(ubxPacket *incomingUBX, uint8_t requestedCl
       //Clear the MSbit
       bytesAvailable &= ~((uint16_t)1 << 15);
 
-      if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
-      {
-        _debugSerial->print(F("checkUbloxI2C: Bytes available error:"));
-        _debugSerial->println(bytesAvailable);
-        if (checksumFailurePin >= 0)
-        {
-          digitalWrite((uint8_t)checksumFailurePin, LOW);
-          delay(10);
-          digitalWrite((uint8_t)checksumFailurePin, HIGH);
-        }
-      }
+      // if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
+      // {
+      //   _debugSerial->print(F("checkUbloxI2C: Bytes available error:"));
+      //   _debugSerial->println(bytesAvailable);
+      //   if (checksumFailurePin >= 0)
+      //   {
+      //     digitalWrite((uint8_t)checksumFailurePin, LOW);
+      //     delay(10);
+      //     digitalWrite((uint8_t)checksumFailurePin, HIGH);
+      //   }
+      // }
     }
 
     if (bytesAvailable > 100)
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->print(F("checkUbloxI2C: Large packet of "));
-        _debugSerial->print(bytesAvailable);
-        _debugSerial->println(F(" bytes received"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->print(F("checkUbloxI2C: Large packet of "));
+      //   _debugSerial->print(bytesAvailable);
+      //   _debugSerial->println(F(" bytes received"));
+      // }
     }
     else
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->print(F("checkUbloxI2C: Reading "));
-        _debugSerial->print(bytesAvailable);
-        _debugSerial->println(F(" bytes"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->print(F("checkUbloxI2C: Reading "));
+      //   _debugSerial->print(bytesAvailable);
+      //   _debugSerial->println(F(" bytes"));
+      // }
     }
 
     while (bytesAvailable)
@@ -1916,10 +1916,10 @@ boolean SFE_UBLOX_GPS::checkUbloxI2C(ubxPacket *incomingUBX, uint8_t requestedCl
           {
             if (incoming == 0x7F)
             {
-              if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
-              {
-                _debugSerial->println(F("checkUbloxU2C: u-blox error, module not ready with data"));
-              }
+              // if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
+              // {
+              //   _debugSerial->println(F("checkUbloxU2C: u-blox error, module not ready with data"));
+              // }
               delay(5); //In logic analyzation, the module starting responding after 1.48ms
               if (checksumFailurePin >= 0)
               {
@@ -1957,57 +1957,57 @@ void SFE_UBLOX_GPS::addToChecksum(uint8_t incoming)
 //Pretty prints the current ubxPacket
 void SFE_UBLOX_GPS::printPacket(ubxPacket *packet)
 {
-  if (_printDebug == true)
-  {
-    _debugSerial->print(F("CLS:"));
-    if (packet->cls == UBX_CLASS_NAV) //1
-      _debugSerial->print(F("NAV"));
-    else if (packet->cls == UBX_CLASS_ACK) //5
-      _debugSerial->print(F("ACK"));
-    else if (packet->cls == UBX_CLASS_CFG) //6
-      _debugSerial->print(F("CFG"));
-    else if (packet->cls == UBX_CLASS_MON) //0x0A
-      _debugSerial->print(F("MON"));
-    else
-    {
-      _debugSerial->print(F("0x"));
-      _debugSerial->print(packet->cls, HEX);
-    }
+  // if (_printDebug == true)
+  // {
+  //   _debugSerial->print(F("CLS:"));
+  //   if (packet->cls == UBX_CLASS_NAV) //1
+  //     _debugSerial->print(F("NAV"));
+  //   else if (packet->cls == UBX_CLASS_ACK) //5
+  //     _debugSerial->print(F("ACK"));
+  //   else if (packet->cls == UBX_CLASS_CFG) //6
+  //     _debugSerial->print(F("CFG"));
+  //   else if (packet->cls == UBX_CLASS_MON) //0x0A
+  //     _debugSerial->print(F("MON"));
+  //   else
+  //   {
+  //     _debugSerial->print(F("0x"));
+  //     _debugSerial->print(packet->cls, HEX);
+  //   }
 
-    _debugSerial->print(F(" ID:"));
-    if (packet->cls == UBX_CLASS_NAV && packet->id == UBX_NAV_PVT)
-      _debugSerial->print(F("PVT"));
-    else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_RATE)
-      _debugSerial->print(F("RATE"));
-    else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_CFG)
-      _debugSerial->print(F("SAVE"));
-    else
-    {
-      _debugSerial->print(F("0x"));
-      _debugSerial->print(packet->id, HEX);
-    }
+  //   _debugSerial->print(F(" ID:"));
+  //   if (packet->cls == UBX_CLASS_NAV && packet->id == UBX_NAV_PVT)
+  //     _debugSerial->print(F("PVT"));
+  //   else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_RATE)
+  //     _debugSerial->print(F("RATE"));
+  //   else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_CFG)
+  //     _debugSerial->print(F("SAVE"));
+  //   else
+  //   {
+  //     _debugSerial->print(F("0x"));
+  //     _debugSerial->print(packet->id, HEX);
+  //   }
 
-    _debugSerial->print(F(" Len: 0x"));
-    _debugSerial->print(packet->len, HEX);
+  //   _debugSerial->print(F(" Len: 0x"));
+  //   _debugSerial->print(packet->len, HEX);
 
-    // Only print the payload is ignoreThisPayload is false otherwise
-    // we could be printing gibberish from beyond the end of packetBuf
-    if (ignoreThisPayload == false)
-    {
-      _debugSerial->print(F(" Payload:"));
+  //   // Only print the payload is ignoreThisPayload is false otherwise
+  //   // we could be printing gibberish from beyond the end of packetBuf
+  //   if (ignoreThisPayload == false)
+  //   {
+  //     _debugSerial->print(F(" Payload:"));
 
-      for (int x = 0; x < packet->len; x++)
-      {
-        _debugSerial->print(F(" "));
-        _debugSerial->print(packet->payload[x], HEX);
-      }
-    }
-    else
-    {
-      _debugSerial->print(F(" Payload: IGNORED"));
-    }
-    _debugSerial->println();
-  }
+  //     for (int x = 0; x < packet->len; x++)
+  //     {
+  //       _debugSerial->print(F(" "));
+  //       _debugSerial->print(packet->payload[x], HEX);
+  //     }
+  //   }
+  //   else
+  //   {
+  //     _debugSerial->print(F(" Payload: IGNORED"));
+  //   }
+  //   _debugSerial->println();
+  // }
 }
 
 
@@ -2096,10 +2096,10 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // gpsNanosecond = extractSignedLong(16); //Includes milliseconds
 
       // fixType = extractByte(20 - startingSpot);
-      gnssFixOk = extractByte(21 - startingSpot) & 0x1; //Get the 1st bit
-      diffSoln = (extractByte(21 - startingSpot) >> 1) & 0x1; //Get the 2nd bit
+      // gnssFixOk = extractByte(21 - startingSpot) & 0x1; //Get the 1st bit
+      // diffSoln = (extractByte(21 - startingSpot) >> 1) & 0x1; //Get the 2nd bit
       // carrierSolution = extractByte(21 - startingSpot) >> 6; //Get 6th&7th bits of this byte
-      headVehValid = (extractByte(21 - startingSpot) >> 5) & 0x1; // Get the 5th bit
+      // headVehValid = (extractByte(21 - startingSpot) >> 5) & 0x1; // Get the 5th bit
       // SIV = extractByte(23 - startingSpot);
       longitude = extractSignedLong(24 - startingSpot);
       latitude = extractSignedLong(28 - startingSpot);
@@ -2114,8 +2114,8 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // headingOfMotion = extractSignedLong(64 - startingSpot);
       // speedAccEst = extractLong(68 - startingSpot);
       // headingAccEst = extractLong(72 - startingSpot);
-      pDOP = extractInt(76 - startingSpot);
-      invalidLlh = extractByte(78 - startingSpot) & 0x1;
+      // pDOP = extractInt(76 - startingSpot);
+      // invalidLlh = extractByte(78 - startingSpot) & 0x1;
       // headVeh = extractSignedLong(84 - startingSpot);
       // magDec = extractSignedInt(88 - startingSpot);
       // magAcc = extractInt(90 - startingSpot);
@@ -2289,7 +2289,7 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // hnrPVT.min = extractByte(9);
       // hnrPVT.sec = extractByte(10);
       // hnrPVT.nano = extractSignedLong(12);
-      hnrPVT.gpsFix = extractByte(16);
+      // hnrPVT.gpsFix = extractByte(16);
       hnrPVT.lon = extractSignedLong(20);
       hnrPVT.lat = extractSignedLong(24);
       hnrPVT.height = extractSignedLong(28);
@@ -2303,17 +2303,17 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // hnrPVT.sAcc = extractLong(60);
       // hnrPVT.headAcc = extractLong(64);
 
-      uint8_t valid = extractByte(11);
+      // uint8_t valid = extractByte(11);
       // hnrPVT.validDate = (valid & 0x01) > 0;
       // hnrPVT.validTime = (valid & 0x02) > 0;
       // hnrPVT.fullyResolved = (valid & 0x04) > 0;
 
-      uint8_t flags = extractByte(17);
-      hnrPVT.gpsFixOK = (flags & 0x01) > 0;
-      hnrPVT.diffSoln = (flags & 0x02) > 0;
+      // uint8_t flags = extractByte(17);
+      // hnrPVT.gpsFixOK = (flags & 0x01) > 0;
+      // hnrPVT.diffSoln = (flags & 0x02) > 0;
       // hnrPVT.WKNSET = (flags & 0x04) > 0;
       // hnrPVT.TOWSET = (flags & 0x08) > 0;
-      hnrPVT.headVehValid = (flags & 0x10) > 0;
+      // hnrPVT.headVehValid = (flags & 0x10) > 0;
 
       hnrPVTQueried = true;
     }
@@ -2383,13 +2383,13 @@ void SFE_UBLOX_GPS::processUBX(uint8_t incoming, ubxPacket *incomingUBX, uint8_t
       else if ((incomingUBX->cls == UBX_CLASS_ACK) && (incomingUBX->id == UBX_ACK_NACK) && (incomingUBX->payload[0] == requestedClass) && (incomingUBX->payload[1] == requestedID))
       {
         incomingUBX->classAndIDmatch = SFE_UBLOX_PACKET_NOTACKNOWLEDGED; // If we have a match, set the classAndIDmatch flag to NOTACKNOWLEDGED
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("processUBX: NACK received: Requested Class: 0x"));
-          _debugSerial->print(incomingUBX->payload[0], HEX);
-          _debugSerial->print(F(" Requested ID: 0x"));
-          _debugSerial->println(incomingUBX->payload[1], HEX);
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("processUBX: NACK received: Requested Class: 0x"));
+        //   _debugSerial->print(incomingUBX->payload[0], HEX);
+        //   _debugSerial->print(F(" Requested ID: 0x"));
+        //   _debugSerial->println(incomingUBX->payload[1], HEX);
+        // }
       }
 
       //This is not an ACK and we do not have a complete class and ID match
@@ -2401,13 +2401,13 @@ void SFE_UBLOX_GPS::processUBX(uint8_t incoming, ubxPacket *incomingUBX, uint8_t
       {
         // This isn't the message we are looking for...
         // Let's say so and leave incomingUBX->classAndIDmatch _unchanged_
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("processUBX: auto NAV PVT/HPPOSLLH/DOP collision: Requested ID: 0x"));
-          _debugSerial->print(requestedID, HEX);
-          _debugSerial->print(F(" Message ID: 0x"));
-          _debugSerial->println(incomingUBX->id, HEX);
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("processUBX: auto NAV PVT/HPPOSLLH/DOP collision: Requested ID: 0x"));
+        //   _debugSerial->print(requestedID, HEX);
+        //   _debugSerial->print(F(" Message ID: 0x"));
+        //   _debugSerial->println(incomingUBX->id, HEX);
+        // }
       }
       // Let's do the same for the HNR messages
       else if ((incomingUBX->cls == requestedClass) &&
@@ -2417,39 +2417,39 @@ void SFE_UBLOX_GPS::processUBX(uint8_t incoming, ubxPacket *incomingUBX, uint8_t
        {
          // This isn't the message we are looking for...
          // Let's say so and leave incomingUBX->classAndIDmatch _unchanged_
-         if (_printDebug == true)
-         {
-           _debugSerial->print(F("processUBX: auto HNR ATT/INS/PVT collision: Requested ID: 0x"));
-           _debugSerial->print(requestedID, HEX);
-           _debugSerial->print(F(" Message ID: 0x"));
-           _debugSerial->println(incomingUBX->id, HEX);
-         }
+        //  if (_printDebug == true)
+        //  {
+        //    _debugSerial->print(F("processUBX: auto HNR ATT/INS/PVT collision: Requested ID: 0x"));
+        //    _debugSerial->print(requestedID, HEX);
+        //    _debugSerial->print(F(" Message ID: 0x"));
+        //    _debugSerial->println(incomingUBX->id, HEX);
+        //  }
        }
 
-      if (_printDebug == true)
-      {
-        _debugSerial->print(F("Incoming: Size: "));
-        _debugSerial->print(incomingUBX->len);
-        _debugSerial->print(F(" Received: "));
-        printPacket(incomingUBX);
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->print(F("Incoming: Size: "));
+      //   _debugSerial->print(incomingUBX->len);
+      //   _debugSerial->print(F(" Received: "));
+      //   printPacket(incomingUBX);
 
-        if (incomingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_VALID)
-        {
-          _debugSerial->println(F("packetCfg now valid"));
-        }
-        if (packetAck.valid == SFE_UBLOX_PACKET_VALIDITY_VALID)
-        {
-          _debugSerial->println(F("packetAck now valid"));
-        }
-        if (incomingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID)
-        {
-          _debugSerial->println(F("packetCfg classAndIDmatch"));
-        }
-        if (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID)
-        {
-          _debugSerial->println(F("packetAck classAndIDmatch"));
-        }
-      }
+      //   if (incomingUBX->valid == SFE_UBLOX_PACKET_VALIDITY_VALID)
+      //   {
+      //     _debugSerial->println(F("packetCfg now valid"));
+      //   }
+      //   if (packetAck.valid == SFE_UBLOX_PACKET_VALIDITY_VALID)
+      //   {
+      //     _debugSerial->println(F("packetAck now valid"));
+      //   }
+      //   if (incomingUBX->classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID)
+      //   {
+      //     _debugSerial->println(F("packetCfg classAndIDmatch"));
+      //   }
+      //   if (packetAck.classAndIDmatch == SFE_UBLOX_PACKET_VALIDITY_VALID)
+      //   {
+      //     _debugSerial->println(F("packetAck classAndIDmatch"));
+      //   }
+      // }
 
       //We've got a valid packet, now do something with it but only if ignoreThisPayload is false
       if (ignoreThisPayload == false)
@@ -2485,23 +2485,23 @@ void SFE_UBLOX_GPS::processUBX(uint8_t incoming, ubxPacket *incomingUBX, uint8_t
           digitalWrite((uint8_t)checksumFailurePin, HIGH);
         }
 
-        _debugSerial->print(F("Checksum failed:"));
-        _debugSerial->print(F(" checksumA: "));
-        _debugSerial->print(incomingUBX->checksumA);
-        _debugSerial->print(F(" checksumB: "));
-        _debugSerial->print(incomingUBX->checksumB);
+        // _debugSerial->print(F("Checksum failed:"));
+        // _debugSerial->print(F(" checksumA: "));
+        // _debugSerial->print(incomingUBX->checksumA);
+        // _debugSerial->print(F(" checksumB: "));
+        // _debugSerial->print(incomingUBX->checksumB);
 
-        _debugSerial->print(F(" rollingChecksumA: "));
-        _debugSerial->print(rollingChecksumA);
-        _debugSerial->print(F(" rollingChecksumB: "));
-        _debugSerial->print(rollingChecksumB);
-        _debugSerial->println();
+        // _debugSerial->print(F(" rollingChecksumA: "));
+        // _debugSerial->print(rollingChecksumA);
+        // _debugSerial->print(F(" rollingChecksumB: "));
+        // _debugSerial->print(rollingChecksumB);
+        // _debugSerial->println();
 
-        _debugSerial->print(F("Failed  : "));
-        _debugSerial->print(F("Size: "));
-        _debugSerial->print(incomingUBX->len);
-        _debugSerial->print(F(" Received: "));
-        printPacket(incomingUBX);
+        // _debugSerial->print(F("Failed  : "));
+        // _debugSerial->print(F("Size: "));
+        // _debugSerial->print(incomingUBX->len);
+        // _debugSerial->print(F(" Received: "));
+        // printPacket(incomingUBX);
       }
     }
   }
@@ -2539,10 +2539,10 @@ void SFE_UBLOX_GPS::processUBX(uint8_t incoming, ubxPacket *incomingUBX, uint8_t
     currentSentence = NONE; //Reset the sentence to being looking for a new start char
     if ((_printDebug == true) || (_printLimitedDebug == true)) // Print this if doing limited debugging
     {
-      if (overrun)
-        _debugSerial->println(F("processUBX: buffer overrun detected"));
-      else
-        _debugSerial->println(F("processUBX: counter hit MAX_PAYLOAD_SIZE"));
+      // if (overrun)
+        // _debugSerial->println(F("processUBX: buffer overrun detected"));
+      // else
+        // _debugSerial->println(F("processUBX: counter hit MAX_PAYLOAD_SIZE"));
     }
   }
 }
@@ -2705,13 +2705,13 @@ void SFE_UBLOX_GPS::process(uint8_t incoming, ubxPacket *incomingUBX, uint8_t re
           incomingUBX->cls = packetBuf.cls; //Copy the class and ID into incomingUBX (usually packetCfg)
           incomingUBX->id = packetBuf.id;
           incomingUBX->counter = packetBuf.counter; //Copy over the .counter too
-          if (_printDebug == true)
-          {
-            _debugSerial->print(F("process: auto NAV PVT/HPPOSLLH/DOP collision: Requested ID: 0x"));
-            _debugSerial->print(requestedID, HEX);
-            _debugSerial->print(F(" Message ID: 0x"));
-            _debugSerial->println(packetBuf.id, HEX);
-          }
+          // if (_printDebug == true)
+          // {
+          //   _debugSerial->print(F("process: auto NAV PVT/HPPOSLLH/DOP collision: Requested ID: 0x"));
+          //   _debugSerial->print(requestedID, HEX);
+          //   _debugSerial->print(F(" Message ID: 0x"));
+          //   _debugSerial->println(packetBuf.id, HEX);
+          // }
         }
         else if ((packetBuf.cls == requestedClass) &&
           (((packetBuf.id == UBX_HNR_ATT) && (requestedID == UBX_HNR_INS || requestedID == UBX_HNR_PVT)) ||
@@ -2723,13 +2723,13 @@ void SFE_UBLOX_GPS::process(uint8_t incoming, ubxPacket *incomingUBX, uint8_t re
           incomingUBX->cls = packetBuf.cls; //Copy the class and ID into incomingUBX (usually packetCfg)
           incomingUBX->id = packetBuf.id;
           incomingUBX->counter = packetBuf.counter; //Copy over the .counter too
-          if (_printDebug == true)
-          {
-            _debugSerial->print(F("process: auto HNR ATT/INS/PVT collision: Requested ID: 0x"));
-            _debugSerial->print(requestedID, HEX);
-            _debugSerial->print(F(" Message ID: 0x"));
-            _debugSerial->println(packetBuf.id, HEX);
-          }
+          // if (_printDebug == true)
+          // {
+          //   _debugSerial->print(F("process: auto HNR ATT/INS/PVT collision: Requested ID: 0x"));
+          //   _debugSerial->print(requestedID, HEX);
+          //   _debugSerial->print(F(" Message ID: 0x"));
+          //   _debugSerial->println(packetBuf.id, HEX);
+          // }
         }
         else
         {
@@ -2759,13 +2759,13 @@ void SFE_UBLOX_GPS::process(uint8_t incoming, ubxPacket *incomingUBX, uint8_t re
     {
       if (packetBuf.len == 0) // Check if length is zero (hopefully this is impossible!)
       {
-        if (_printDebug == true)
-        {
-          _debugSerial->print(F("process: ZERO LENGTH packet received: Class: 0x"));
-          _debugSerial->print(packetBuf.cls, HEX);
-          _debugSerial->print(F(" ID: 0x"));
-          _debugSerial->println(packetBuf.id, HEX);
-        }
+        // if (_printDebug == true)
+        // {
+        //   _debugSerial->print(F("process: ZERO LENGTH packet received: Class: 0x"));
+        //   _debugSerial->print(packetBuf.cls, HEX);
+        //   _debugSerial->print(F(" ID: 0x"));
+        //   _debugSerial->println(packetBuf.id, HEX);
+        // }
         //If length is zero (!) this will be the first byte of the checksum so record it
         packetBuf.checksumA = incoming;
       }
@@ -2810,15 +2810,15 @@ void SFE_UBLOX_GPS::process(uint8_t incoming, ubxPacket *incomingUBX, uint8_t re
         }
         else // Length is not 2 (hopefully this is impossible!)
         {
-          if (_printDebug == true)
-          {
-            _debugSerial->print(F("process: ACK received with .len != 2: Class: 0x"));
-            _debugSerial->print(packetBuf.payload[0], HEX);
-            _debugSerial->print(F(" ID: 0x"));
-            _debugSerial->print(packetBuf.payload[1], HEX);
-            _debugSerial->print(F(" len: "));
-            _debugSerial->println(packetBuf.len);
-          }
+          // if (_printDebug == true)
+          // {
+          //   _debugSerial->print(F("process: ACK received with .len != 2: Class: 0x"));
+          //   _debugSerial->print(packetBuf.payload[0], HEX);
+          //   _debugSerial->print(F(" ID: 0x"));
+          //   _debugSerial->print(packetBuf.payload[1], HEX);
+          //   _debugSerial->print(F(" len: "));
+          //   _debugSerial->println(packetBuf.len);
+          // }
         }
       }
     }
@@ -2872,28 +2872,28 @@ boolean SFE_UBLOX_GPS::getPVT(uint16_t maxWait)
   if (autoPVT && autoPVTImplicitUpdate)
   {
     //The GPS is automatically reporting, we just check whether we got unread data
-    if (_printDebug == true)
-    {
-      _debugSerial->println(F("getPVT: Autoreporting"));
-    }
+    // if (_printDebug == true)
+    // {
+    //   _debugSerial->println(F("getPVT: Autoreporting"));
+    // }
     checkUbloxInternal(&packetCfg, UBX_CLASS_NAV, UBX_NAV_PVT);
     return moduleQueried.all;
   }
   else if (autoPVT && !autoPVTImplicitUpdate)
   {
     //Someone else has to call checkUblox for us...
-    if (_printDebug == true)
-    {
-      _debugSerial->println(F("getPVT: Exit immediately"));
-    }
+    // if (_printDebug == true)
+    // {
+    //   _debugSerial->println(F("getPVT: Exit immediately"));
+    // }
     return (false);
   }
   else
   {
-    if (_printDebug == true)
-    {
-      _debugSerial->println(F("getPVT: Polling"));
-    }
+    // if (_printDebug == true)
+    // {
+    //   _debugSerial->println(F("getPVT: Polling"));
+    // }
 
     //The GPS is not automatically reporting navigation position so we have to poll explicitly
     packetCfg.cls = UBX_CLASS_NAV;
@@ -2909,27 +2909,27 @@ boolean SFE_UBLOX_GPS::getPVT(uint16_t maxWait)
 
     if ((retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN) && (packetCfg.cls == UBX_CLASS_NAV))
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->println(F("getPVT: data was OVERWRITTEN by another NAV message (but that's OK)"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->println(F("getPVT: data was OVERWRITTEN by another NAV message (but that's OK)"));
+      // }
       return (true);
     }
 
     if ((retVal == SFE_UBLOX_STATUS_DATA_OVERWRITTEN) && (packetCfg.cls == UBX_CLASS_HNR))
     {
-      if (_printDebug == true)
-      {
-        _debugSerial->println(F("getPVT: data was OVERWRITTEN by a HNR message (and that's not OK)"));
-      }
+      // if (_printDebug == true)
+      // {
+      //   _debugSerial->println(F("getPVT: data was OVERWRITTEN by a HNR message (and that's not OK)"));
+      // }
       return (false);
     }
 
-    if (_printDebug == true)
-    {
-      _debugSerial->print(F("getPVT retVal: "));
-    //   _debugSerial->println(statusString(retVal));
-    }
+    // if (_printDebug == true)
+    // {
+    //   _debugSerial->print(F("getPVT retVal: "));
+    // //   _debugSerial->println(statusString(retVal));
+    // }
     return (false);
   }
 }
