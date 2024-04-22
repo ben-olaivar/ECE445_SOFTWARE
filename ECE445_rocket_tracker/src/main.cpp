@@ -204,6 +204,7 @@ void compass() {
       curr_latitude = myGPS.getLatitude();
       curr_longitude = myGPS.getLongitude();
       display_data(curr_latitude, curr_longitude);  // update display given our new gps coords
+      // lastTime = millis();
     }
 
   }
