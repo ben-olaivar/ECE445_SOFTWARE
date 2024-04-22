@@ -8,8 +8,8 @@
 #include <Adafruit_SSD1306.h>
 #include <string.h>
 #include <TinyGPSPlus.h>
-#include <LoRa.h>
-#include <RH_RF95.h>
+// #include <LoRa.h>
+// #include <RH_RF95.h>
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -293,10 +293,10 @@ void display_menu(int m_type) {
 
 
 //!------------------------BEGIN RADIO DISPLAY------------------------
-#define RF95_FREQ 434.0
-#define RFM96_RST 4
+// #define RF95_FREQ 434.0
+// #define RFM96_RST 4
 
-RH_RF95 radio;
+// RH_RF95 radio;
 
 
 //!------------------------END RADIO DISPLAY------------------------
@@ -335,23 +335,23 @@ void setup() {
   }
 
   //!-------------------RADIO SETUP-------------------
-  if (!radio.init()) {
-    // return ErrorCode::RADIO_INIT_FAILED;
-    // Serial.println("Radio init failed");
-    while (1) {}
-  }
-  if (!radio.setFrequency(RF95_FREQ)) {
-    // return ErrorCode::RADIO_SET_FREQUENCY_FAILED;
-    // Serial.println("Radio init failed");
-    while (1) {}
-  }
+  // if (!radio.init()) {
+  //   // return ErrorCode::RADIO_INIT_FAILED;
+  //   // Serial.println("Radio init failed");
+  //   while (1) {}
+  // }
+  // if (!radio.setFrequency(RF95_FREQ)) {
+  //   // return ErrorCode::RADIO_SET_FREQUENCY_FAILED;
+  //   // Serial.println("Radio init failed");
+  //   while (1) {}
+  // }
 
-  /*
-  * The default transmitter power is 13dBm, using PA_BOOST.
-  * If you are using RFM95/96/97/98 modules which uses the PA_BOOST
-  * transmitter pin, then you can set transmitter powers from 5 to 23 dBm:
-  */
-  radio.setTxPower(6, false);
+  // /*
+  // * The default transmitter power is 13dBm, using PA_BOOST.
+  // * If you are using RFM95/96/97/98 modules which uses the PA_BOOST
+  // * transmitter pin, then you can set transmitter powers from 5 to 23 dBm:
+  // */
+  // radio.setTxPower(6, false);
 
   // start with the top (base) menu (menu 0)
   display_menu(0);
