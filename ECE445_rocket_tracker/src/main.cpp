@@ -1,20 +1,22 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-// #include "pins.h"
-// #include <SparkFun_Ublox_Arduino_Library.h> // http://librarymanager/All#SparkFun_u-blox_GNSS
-#include "gps.h"
+
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+
 #include <string.h>
+
 #include <TinyGPSPlus.h>
-// #include <LoRa.h>
-// #include <RH_RF95.h>
+#include "gps.h"
+
+#include <SPI.h>
+#include <LoRa.h>
 
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 32 // OLED display height, in pixels
-#define COMPASS_LENGTH 11
+#define SCREEN_WIDTH    128   // OLED display width, in pixels
+#define SCREEN_HEIGHT   32    // OLED display height, in pixels
+#define COMPASS_LENGTH  11
 
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -22,25 +24,32 @@
 // On an arduino UNO:       A4(SDA), A5(SCL)
 #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3D ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+Adafruit_SSD1306 display(128, 32, &Wire, OLED_RESET);
 
 // GPS setup
-SFE_UBLOX_GPS myGPS;
-float curr_longitude  = 0;
-float curr_latitude   = 0;
-long lastTime   = 0;
+// SFE_UBLOX_GPS myGPS;
 
 // Menu setup
 int menu_type = -1;
-const int menu_button_pin   = 2;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-const int enter_button_pin  = 3;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-const int down_button_pin   = 4;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
-const int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
 
-int menu_button_state   = 0;      // variable for reading the "ENTER" pushbutton status
-int enter_button_state  = 0;      // variable for reading the "ENTER" pushbutton status
-int down_button_state   = 0;      // variable for reading the "DOWN"  pushbutton status
-int up_button_state     = 0;      // variable for reading the "UP"    pushbutton status
+int menu_button_pin   = 2;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int enter_button_pin  = 3;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int down_button_pin   = 4;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+
+
+// Radio Setup
+struct Data_in {
+    long lat = 0;
+    long lon = 0;
+    char FAA_id = 0;
+} beaconData;
+
+
+
+// Data_in beaconData = {0, 0, 0};    // data will default to 0 before proper data can be sent out
+
+float curr_freq = 433.0;
 
 
 
@@ -103,12 +112,12 @@ int angle_to_y_pos(float angle_radians) {
 *     - angle_to_x_pos()
 *     - angle_to_y_pos()
 */
-void drawCompass(float curr_latitude, float curr_longitude, float target_latitude, float target_longitude) {
+void drawCompass(float tracker_latitude, float tracker_longitude, float target_latitude, float target_longitude) {
   int compass_x_center = 12;
   int compass_y_center = SCREEN_HEIGHT / 2;
 
-  float y_1 = curr_latitude;
-  float x_1 = curr_longitude;
+  float y_1 = tracker_latitude;
+  float x_1 = tracker_longitude;
 
   float y_2 = target_latitude;
   float x_2 = target_longitude;
@@ -163,8 +172,8 @@ void drawCompass(float curr_latitude, float curr_longitude, float target_latitud
 * calculations for the arrow + distances
 *
 * Params: 
-*     - long curr_longitude: the longitude of the user (handheld tracker)
-*     - long curr_latitude:  the latitude of the user (handheld tracker)
+*     - long tracker_longitude: the longitude of the user (handheld tracker)
+*     - long tracker_latitude:  the latitude of the user (handheld tracker)
 *     - long heading: the angle the user is facing (in degrees) from North
 * 
 * Dependencies: 
@@ -172,20 +181,20 @@ void drawCompass(float curr_latitude, float curr_longitude, float target_latitud
 *     - dist_between_points()
 *     - display_distance_data()
 */
-void display_data(float curr_latitude, float curr_longitude) {
+void display_data(float beacon_latitude, float beacon_longitude, float tracker_latitude, float tracker_longitude) {
   display.clearDisplay();
 
-  curr_latitude  = curr_latitude  / 10000000.0; // getting from the form xxxxxxxxx to xx.xxxxxxx
-  curr_longitude = curr_longitude / 10000000.0;
-  // 40.11450311099257, -8822732977554023
-  float target_latitude  = 401145031 / 10000000.0;   //TODO: Remove these
-  float target_longitude = -882273297 / 10000000.0;  //TODO: Remove these
+  tracker_latitude  = tracker_latitude  / 10000000.0; // getting from the form xxxxxxxxx to xx.xxxxxxx
+  tracker_longitude = tracker_longitude / 10000000.0;
+
+  beacon_latitude  = beacon_latitude  / 10000000.0;  //TODO: Remove these
+  beacon_longitude = beacon_longitude / 10000000.0;  //TODO: Remove these
 
   // First put arrow into screen memory (Left side of screen)
-  drawCompass(curr_latitude, curr_longitude, target_latitude, target_longitude);
+  drawCompass(tracker_latitude, tracker_longitude, beacon_latitude, beacon_longitude);
   
   // Second, put distance data into screen memory (right side of screen)
-  int distance = TinyGPSPlus::distanceBetween(curr_latitude, curr_longitude, target_latitude, target_longitude);
+  int distance = TinyGPSPlus::distanceBetween(tracker_latitude, tracker_longitude, beacon_latitude, beacon_longitude);
   
   display_distance_data(distance);
 
@@ -200,22 +209,89 @@ void compass() {
 
   //TODO: while(menu button not pressed)
   while (true) {
-    if (millis() - lastTime > 1000) {       // grab GPS data every 1 second
-      curr_latitude = myGPS.getLatitude();
-      curr_longitude = myGPS.getLongitude();
-      display_data(curr_latitude, curr_longitude);  // update display given our new gps coords
-      // lastTime = millis();
+    bool menu_button_state   = !digitalRead(menu_button_pin);
+
+    if (menu_button_state == 1) {
+      break;
     }
+    // get current tracker position
+    long tracker_latitude = 401145031; //myGPS.getLatitude();
+    long tracker_longitude = -882273297; //myGPS.getLongitude();
+    // get current beacon position
+    // int packetSize = LoRa.parsePacket();
+
+
+  
+    // if (packetSize) {   // received a packet
+    //   Serial.print(" data ");
+    //   LoRa.readBytes((byte *)&beaconData, packetSize);   // reads received freq into stored data
+    // }
+    long beacon_latitude  = 401145031;   //TODO: Remove these
+    long beacon_longitude = -882273297;  //TODO: Remove these
+    
+    display_data(beacon_latitude, beacon_longitude, tracker_latitude, tracker_longitude);  // update display given our new gps coords
+  }
+  
+}
+
+void change_freq() {
+  
+  float new_freq = 433.0;
+  
+  while (true) {
+    bool menu_button_state   = !digitalRead(menu_button_pin);
+    bool enter_button_state  = !digitalRead(enter_button_pin);
+    bool up_button_state     = !digitalRead(up_button_pin);
+    bool down_button_state   = !digitalRead(down_button_pin);
+
+
+    //!-----------------------MENU-----------------------
+    if (menu_button_state == 1) {
+      break;
+    }
+    
+    //!-----------------------ENTER-----------------------
+    else if (enter_button_state == 1) {
+      // transmit command
+
+
+      LoRa.setFrequency(new_freq * 1E6);
+      curr_freq = new_freq;
+      break;
+    }
+
+    //!-----------------------UP-----------------------
+    else if (up_button_state == 1 && new_freq < 434.8) {
+      new_freq += 0.1;
+      delay(300);
+    }
+
+    //!-----------------------DOWN-----------------------
+    else if (down_button_state == 1 && new_freq > 433.0) {
+      new_freq -= 0.1;
+      delay(300);
+    }
+    String display_string = "Frequency:\n" + String(new_freq);
+
+    int text_length = 80;
+    char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
+
+    display.setTextSize(2);               // Normal 1:1 pixel scale
+    display.setTextColor(SSD1306_WHITE);  // Draw white text
+    display.setCursor(0, 0);              // Start at top-left corner
+    display.cp437(true);                  // Use full 256 char 'Code Page 437' font
+    display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
+    display.clearDisplay();
+    display.write(menu_text, display_string.length());  // put string into buffer memory
+
+    display.display();  // update display from buffer
 
   }
 
 }
-//!------------------------END COMPASS DISPLAY------------------------
-
 
 
 //!------------------------BEGIN MENU DISPLAY------------------------
-
 void display_menu(int m_type) {
 
   if (m_type == menu_type) {  // don't waste time displaying the same menu
@@ -229,6 +305,7 @@ void display_menu(int m_type) {
   String row_1 = "";
   String row_2 = "";
   String row_3 = "";
+  String row_4 = "";
   String display_string = "";
 
   switch (m_type) {
@@ -249,16 +326,18 @@ void display_menu(int m_type) {
 
     case 2: // This is sub menu of selected Frequency Change
       row_1 = "---Freq Change---\n";
-      row_2 = "> Set Frequency: <\n";
-      row_3 = "Back";
+      row_2 = "Curr_freq: " + String(curr_freq) + "\n";
+      row_3 = "> Set Frequency: <\n";
+      row_4 = "Back";
         // t_frequency;
 
       break;
 
     case 3: // This is sub menu of selected Frequency Change
       row_1 = "---Freq Change---\n";
-      row_2 = "Set Frequency:\n";
-      row_3 = "> Back <";
+      row_2 = "Curr_freq: " + String(curr_freq) + "\n";
+      row_3 = "Set Frequency:\n";
+      row_4 = "> Back <";
         // t_frequency;
 
       break;
@@ -268,13 +347,17 @@ void display_menu(int m_type) {
 
       break;
 
+    case 5:
+      change_freq();
+
+      break;
+
     default:
       break;
   }
 
   // Serial.println("Display String: " + display_string);
-
-  display_string = row_1 + row_2 + row_3;
+  display_string = row_1 + row_2 + row_3 + row_4;
 
   display.setTextSize(1);               // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE);  // Draw white text
@@ -286,21 +369,6 @@ void display_menu(int m_type) {
   display.display();  // update display from buffer
 
 }
-
-
-//!------------------------END MENU DISPLAY------------------------
-
-
-
-//!------------------------BEGIN RADIO DISPLAY------------------------
-// #define RF95_FREQ 434.0
-// #define RFM96_RST 4
-
-// RH_RF95 radio;
-
-
-//!------------------------END RADIO DISPLAY------------------------
-
 
 
 
@@ -324,36 +392,24 @@ void setup() {
     // Serial.println(F("SSD1306 allocation failed"));
     while(true){}; //proceed, loop forever
   }
-  display.clearDisplay(); // Clear the buffer
 
 
   //!-------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
-  if (myGPS.begin() == false) {
-    // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-    while (1) {}
-  }
+  // if (myGPS.begin() == false) {
+  //   // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+  //   while (1) {}
+  // }
 
   //!-------------------RADIO SETUP-------------------
-  // if (!radio.init()) {
-  //   // return ErrorCode::RADIO_INIT_FAILED;
-  //   // Serial.println("Radio init failed");
-  //   while (1) {}
-  // }
-  // if (!radio.setFrequency(RF95_FREQ)) {
-  //   // return ErrorCode::RADIO_SET_FREQUENCY_FAILED;
-  //   // Serial.println("Radio init failed");
-  //   while (1) {}
-  // }
-
-  // /*
-  // * The default transmitter power is 13dBm, using PA_BOOST.
-  // * If you are using RFM95/96/97/98 modules which uses the PA_BOOST
-  // * transmitter pin, then you can set transmitter powers from 5 to 23 dBm:
-  // */
-  // radio.setTxPower(6, false);
+  // LoRa.setPins(10, 9, 2);
+  if (!LoRa.begin(433E6)) {
+    // Serial.println("Starting LoRa failed!");
+    while (1);
+  }
 
   // start with the top (base) menu (menu 0)
+  display.clearDisplay(); // Clear the buffer
   display_menu(0);
   menu_type = 0;
 }
@@ -362,10 +418,10 @@ void setup() {
 
 
 void loop() {
-  menu_button_state   = !digitalRead(menu_button_pin);
-  enter_button_state  = !digitalRead(enter_button_pin);
-  up_button_state     = !digitalRead(up_button_pin);
-  down_button_state   = !digitalRead(down_button_pin);
+  bool menu_button_state   = !digitalRead(menu_button_pin);
+  bool enter_button_state  = !digitalRead(enter_button_pin);
+  bool up_button_state     = !digitalRead(up_button_pin);
+  bool down_button_state   = !digitalRead(down_button_pin);
 
   // 0 = base menu (compass selected)
   // 1 = base menu (frequency change selected)
@@ -380,35 +436,39 @@ void loop() {
     menu_type = 0;
   }
 
-
   //!-----------------------ENTER-----------------------
   else if (enter_button_state == 1) {
     // Serial.println("Enter button pressed");
 
     if (menu_type == 0) {       // display compass
-      // display compass
-      // display.clearDisplay();
       display_menu(4);
-      // compass();
+      display_menu(0);
+      menu_type = 0;
+      delay(300);
     }
+
     else if (menu_type == 1) {  // enter frequency change sub-menu 
       display_menu(2);
       menu_type = 2;
+      delay(300);
     }
+
     else if (menu_type == 2) {  // change frequency function
-      // user-input frequency
-      // press enter again
-      // change frequency
+      delay(300);
+      display_menu(5);
+      display_menu(0);
+      menu_type = 0;
+      delay(300);
     }
+
     else if (menu_type == 3) {  // 'back' go back to main menu
       display_menu(0);
       delay(300);
       menu_type = 0;
+      delay(300);
     }
 
   }
-
-
 
   //!-----------------------UP-----------------------
   else if (up_button_state == 1) {
@@ -423,9 +483,6 @@ void loop() {
       menu_type = 2;
     }
   }
-
-
-
 
   //!-----------------------DOWN-----------------------
   else if (down_button_state == 1) {

@@ -52,10 +52,10 @@
 
 #include <Wire.h>
 
-const uint8_t VAL_LAYER_RAM = (1 << 0);
-const uint8_t VAL_LAYER_BBR = (1 << 1);
-const uint8_t VAL_LAYER_FLASH = (1 << 2);
-const uint8_t VAL_LAYER_ALL = VAL_LAYER_RAM | VAL_LAYER_BBR | VAL_LAYER_FLASH; //Not valid with getVal()
+// const uint8_t VAL_LAYER_RAM = (1 << 0);
+// const uint8_t VAL_LAYER_BBR = (1 << 1);
+// const uint8_t VAL_LAYER_FLASH = (1 << 2);
+// const uint8_t VAL_LAYER_ALL = VAL_LAYER_RAM | VAL_LAYER_BBR | VAL_LAYER_FLASH; //Not valid with getVal()
 
 
 // #include "gps_config_keys.h"
@@ -442,22 +442,22 @@ typedef struct
 } ubxPacket;
 
 // Struct to hold the results returned by getGeofenceState (returned by UBX-NAV-GEOFENCE)
-typedef struct
-{
-	uint8_t status;	   // Geofencing status: 0 - Geofencing not available or not reliable; 1 - Geofencing active
-	uint8_t numFences; // Number of geofences
-	uint8_t combState; // Combined (logical OR) state of all geofences: 0 - Unknown; 1 - Inside; 2 - Outside
-	uint8_t states[4]; // Geofence states: 0 - Unknown; 1 - Inside; 2 - Outside
-} geofenceState;
+// typedef struct
+// {
+// 	uint8_t status;	   // Geofencing status: 0 - Geofencing not available or not reliable; 1 - Geofencing active
+// 	uint8_t numFences; // Number of geofences
+// 	uint8_t combState; // Combined (logical OR) state of all geofences: 0 - Unknown; 1 - Inside; 2 - Outside
+// 	uint8_t states[4]; // Geofence states: 0 - Unknown; 1 - Inside; 2 - Outside
+// } geofenceState;
 
 // Struct to hold the current geofence parameters
-typedef struct
-{
-	uint8_t numFences; // Number of active geofences
-	int32_t lats[4];   // Latitudes of geofences (in degrees * 10^-7)
-	int32_t longs[4];  // Longitudes of geofences (in degrees * 10^-7)
-	uint32_t rads[4];  // Radii of geofences (in m * 10^-2)
-} geofenceParams;
+// typedef struct
+// {
+// 	uint8_t numFences; // Number of active geofences
+// 	int32_t lats[4];   // Latitudes of geofences (in degrees * 10^-7)
+// 	int32_t longs[4];  // Longitudes of geofences (in degrees * 10^-7)
+// 	uint32_t rads[4];  // Radii of geofences (in m * 10^-2)
+// } geofenceParams;
 
 class SFE_UBLOX_GPS
 {
@@ -492,7 +492,7 @@ public:
 	boolean checkUblox(uint8_t requestedClass = UBX_CLASS_NAV, uint8_t requestedID = UBX_NAV_PVT); //Checks module with user selected commType
 
 	boolean checkUbloxI2C(ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID);	   //Method for I2C polling of data, passing any new bytes to process()
-	boolean checkUbloxSerial(ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID); //Method for serial polling of data, passing any new bytes to process()
+	// boolean checkUbloxSerial(ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID); //Method for serial polling of data, passing any new bytes to process()
 
 	void process(uint8_t incoming, ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID);	//Processes NMEA and UBX binary sentences one byte at a time
 	void processUBX(uint8_t incoming, ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID); //Given a character, file it away into the uxb packet structure
@@ -507,7 +507,7 @@ public:
 	sfe_ublox_status_e sendI2cCommand(ubxPacket *outgoingUBX, uint16_t maxWait = 250);
 	void sendSerialCommand(ubxPacket *outgoingUBX);
 
-	void printPacket(ubxPacket *packet); //Useful for debugging
+	// void printPacket(ubxPacket *packet); //Useful for debugging
 
 	void factoryReset(); //Send factory reset sequence (i.e. load "default" configuration and perform hardReset)
 	void hardReset();	 //Perform a reset leading to a cold start (zero info start-up)
@@ -534,9 +534,9 @@ public:
 #define getHPPOSLLHmaxWait 1100 // Default maxWait for getHPPOSLLH and all functions which call it
 #define getDOPmaxWait 1100 // Default maxWait for getDOP and all functions which all it
 
-	boolean assumeAutoPVT(boolean enabled, boolean implicitUpdate = true);							//In case no config access to the GPS is possible and PVT is send cyclically already
-	boolean setAutoPVT(boolean enabled, uint16_t maxWait = defaultMaxWait);							//Enable/disable automatic PVT reports at the navigation frequency
-	boolean setAutoPVT(boolean enabled, boolean implicitUpdate, uint16_t maxWait = defaultMaxWait); //Enable/disable automatic PVT reports at the navigation frequency, with implicitUpdate == false accessing stale data will not issue parsing of data in the rxbuffer of your interface, instead you have to call checkUblox when you want to perform an update
+	// boolean assumeAutoPVT(boolean enabled, boolean implicitUpdate = true);							//In case no config access to the GPS is possible and PVT is send cyclically already
+	// boolean setAutoPVT(boolean enabled, uint16_t maxWait = defaultMaxWait);							//Enable/disable automatic PVT reports at the navigation frequency
+	// boolean setAutoPVT(boolean enabled, boolean implicitUpdate, uint16_t maxWait = defaultMaxWait); //Enable/disable automatic PVT reports at the navigation frequency, with implicitUpdate == false accessing stale data will not issue parsing of data in the rxbuffer of your interface, instead you have to call checkUblox when you want to perform an update
 	boolean getPVT(uint16_t maxWait = getPVTmaxWait);												//Query module for latest group of datums and load global vars: lat, long, alt, speed, SIV, accuracies, etc. If autoPVT is disabled, performs an explicit poll and waits, if enabled does not block. Returns true if new PVT is available.
 	boolean assumeAutoHPPOSLLH(boolean enabled, boolean implicitUpdate = true);							//In case no config access to the GPS is possible and HPPOSLLH is send cyclically already
 	boolean setAutoHPPOSLLH(boolean enabled, uint16_t maxWait = defaultMaxWait);							//Enable/disable automatic HPPOSLLH reports at the navigation frequency
@@ -726,9 +726,9 @@ public:
 	//Support for geofences
 	boolean addGeofence(int32_t latitude, int32_t longitude, uint32_t radius, byte confidence = 0, byte pinPolarity = 0, byte pin = 0, uint16_t maxWait = 1100); // Add a new geofence
 	boolean clearGeofences(uint16_t maxWait = 1100);																											 //Clears all geofences
-	boolean getGeofenceState(geofenceState &currentGeofenceState, uint16_t maxWait = 1100);																		 //Returns the combined geofence state
+	// boolean getGeofenceState(geofenceState &currentGeofenceState, uint16_t maxWait = 1100);																		 //Returns the combined geofence state
 	boolean clearAntPIO(uint16_t maxWait = 1100);																												 //Clears the antenna control pin settings to release the PIOs
-	geofenceParams currentGeofenceParams;																														 // Global to store the geofence parameters
+	// geofenceParams currentGeofenceParams;																														 // Global to store the geofence parameters
 
 	boolean powerSaveMode(bool power_save = true, uint16_t maxWait = 1100);
 	uint8_t getPowerSaveMode(uint16_t maxWait = 1100); // Returns 255 if the sendCommand fails
@@ -1236,7 +1236,7 @@ private:
 SFE_UBLOX_GPS::SFE_UBLOX_GPS(void)
 {
   // Constructor
-  currentGeofenceParams.numFences = 0; // Zero the number of geofences currently in use
+  // currentGeofenceParams.numFences = 0; // Zero the number of geofences currently in use
   moduleQueried.versionNumber = false;
 
   if (checksumFailurePin >= 0)
@@ -1955,60 +1955,60 @@ void SFE_UBLOX_GPS::addToChecksum(uint8_t incoming)
 }
 
 //Pretty prints the current ubxPacket
-void SFE_UBLOX_GPS::printPacket(ubxPacket *packet)
-{
-  // if (_printDebug == true)
-  // {
-  //   _debugSerial->print(F("CLS:"));
-  //   if (packet->cls == UBX_CLASS_NAV) //1
-  //     _debugSerial->print(F("NAV"));
-  //   else if (packet->cls == UBX_CLASS_ACK) //5
-  //     _debugSerial->print(F("ACK"));
-  //   else if (packet->cls == UBX_CLASS_CFG) //6
-  //     _debugSerial->print(F("CFG"));
-  //   else if (packet->cls == UBX_CLASS_MON) //0x0A
-  //     _debugSerial->print(F("MON"));
-  //   else
-  //   {
-  //     _debugSerial->print(F("0x"));
-  //     _debugSerial->print(packet->cls, HEX);
-  //   }
+// void SFE_UBLOX_GPS::printPacket(ubxPacket *packet)
+// {
+//   // if (_printDebug == true)
+//   // {
+//   //   _debugSerial->print(F("CLS:"));
+//   //   if (packet->cls == UBX_CLASS_NAV) //1
+//   //     _debugSerial->print(F("NAV"));
+//   //   else if (packet->cls == UBX_CLASS_ACK) //5
+//   //     _debugSerial->print(F("ACK"));
+//   //   else if (packet->cls == UBX_CLASS_CFG) //6
+//   //     _debugSerial->print(F("CFG"));
+//   //   else if (packet->cls == UBX_CLASS_MON) //0x0A
+//   //     _debugSerial->print(F("MON"));
+//   //   else
+//   //   {
+//   //     _debugSerial->print(F("0x"));
+//   //     _debugSerial->print(packet->cls, HEX);
+//   //   }
 
-  //   _debugSerial->print(F(" ID:"));
-  //   if (packet->cls == UBX_CLASS_NAV && packet->id == UBX_NAV_PVT)
-  //     _debugSerial->print(F("PVT"));
-  //   else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_RATE)
-  //     _debugSerial->print(F("RATE"));
-  //   else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_CFG)
-  //     _debugSerial->print(F("SAVE"));
-  //   else
-  //   {
-  //     _debugSerial->print(F("0x"));
-  //     _debugSerial->print(packet->id, HEX);
-  //   }
+//   //   _debugSerial->print(F(" ID:"));
+//   //   if (packet->cls == UBX_CLASS_NAV && packet->id == UBX_NAV_PVT)
+//   //     _debugSerial->print(F("PVT"));
+//   //   else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_RATE)
+//   //     _debugSerial->print(F("RATE"));
+//   //   else if (packet->cls == UBX_CLASS_CFG && packet->id == UBX_CFG_CFG)
+//   //     _debugSerial->print(F("SAVE"));
+//   //   else
+//   //   {
+//   //     _debugSerial->print(F("0x"));
+//   //     _debugSerial->print(packet->id, HEX);
+//   //   }
 
-  //   _debugSerial->print(F(" Len: 0x"));
-  //   _debugSerial->print(packet->len, HEX);
+//   //   _debugSerial->print(F(" Len: 0x"));
+//   //   _debugSerial->print(packet->len, HEX);
 
-  //   // Only print the payload is ignoreThisPayload is false otherwise
-  //   // we could be printing gibberish from beyond the end of packetBuf
-  //   if (ignoreThisPayload == false)
-  //   {
-  //     _debugSerial->print(F(" Payload:"));
+//   //   // Only print the payload is ignoreThisPayload is false otherwise
+//   //   // we could be printing gibberish from beyond the end of packetBuf
+//   //   if (ignoreThisPayload == false)
+//   //   {
+//   //     _debugSerial->print(F(" Payload:"));
 
-  //     for (int x = 0; x < packet->len; x++)
-  //     {
-  //       _debugSerial->print(F(" "));
-  //       _debugSerial->print(packet->payload[x], HEX);
-  //     }
-  //   }
-  //   else
-  //   {
-  //     _debugSerial->print(F(" Payload: IGNORED"));
-  //   }
-  //   _debugSerial->println();
-  // }
-}
+//   //     for (int x = 0; x < packet->len; x++)
+//   //     {
+//   //       _debugSerial->print(F(" "));
+//   //       _debugSerial->print(packet->payload[x], HEX);
+//   //     }
+//   //   }
+//   //   else
+//   //   {
+//   //     _debugSerial->print(F(" Payload: IGNORED"));
+//   //   }
+//   //   _debugSerial->println();
+//   // }
+// }
 
 
 //Given a spot in the payload array, extract four bytes and build a long
@@ -2132,7 +2132,7 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // moduleQueried.gpsTimeValid = true;
       // moduleQueried.gpsNanosecond = true;
 
-      moduleQueried.all = true;
+      // moduleQueried.all = true;
       // moduleQueried.gnssFixOk = true;
       // moduleQueried.diffSoln = true;
       // moduleQueried.headVehValid = true;
@@ -2172,7 +2172,7 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // horizontalAccuracy = extractLong(28);
       // verticalAccuracy = extractLong(32);
 
-      highResModuleQueried.all = true;
+      // highResModuleQueried.all = true;
       // highResModuleQueried.highResLatitude = true;
       // highResModuleQueried.highResLatitudeHp = true;
       // highResModuleQueried.highResLongitude = true;
@@ -2247,13 +2247,13 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
     if (msg->id == UBX_HNR_ATT && msg->len == 32)
     {
       //Parse various byte fields into global vars
-      hnrAtt.iTOW = extractLong(0);
-      hnrAtt.roll = extractSignedLong(8);
-      hnrAtt.pitch = extractSignedLong(12);
-      hnrAtt.heading = extractSignedLong(16);
-      hnrAtt.accRoll = extractLong(20);
-      hnrAtt.accPitch = extractLong(24);
-      hnrAtt.accHeading = extractLong(28);
+      // hnrAtt.iTOW = extractLong(0);
+      // hnrAtt.roll = extractSignedLong(8);
+      // hnrAtt.pitch = extractSignedLong(12);
+      // hnrAtt.heading = extractSignedLong(16);
+      // hnrAtt.accRoll = extractLong(20);
+      // hnrAtt.accPitch = extractLong(24);
+      // hnrAtt.accHeading = extractLong(28);
 
       hnrAttQueried = true;
     }
@@ -2292,7 +2292,7 @@ void SFE_UBLOX_GPS::processUBXpacket(ubxPacket *msg)
       // hnrPVT.gpsFix = extractByte(16);
       hnrPVT.lon = extractSignedLong(20);
       hnrPVT.lat = extractSignedLong(24);
-      hnrPVT.height = extractSignedLong(28);
+      // hnrPVT.height = extractSignedLong(28);
       // hnrPVT.hMSL = extractSignedLong(32);
       // hnrPVT.gSpeed = extractSignedLong(36);
       // hnrPVT.speed = extractSignedLong(40);
@@ -2605,19 +2605,19 @@ void SFE_UBLOX_GPS::processRTCMframe(uint8_t incoming)
 //This function is called for each byte of an RTCM frame
 //Ths user can overwrite this function and process the RTCM frame as they please
 //Bytes can be piped to Serial or other interface. The consumer could be a radio or the internet (Ntrip broadcaster)
-void SFE_UBLOX_GPS::processRTCM(uint8_t incoming)
-{
-  //Radio.sendReliable((String)incoming); //An example of passing this byte to a radio
+// void SFE_UBLOX_GPS::processRTCM(uint8_t incoming)
+// {
+//   //Radio.sendReliable((String)incoming); //An example of passing this byte to a radio
 
-  //_debugSerial->write(incoming); //An example of passing this byte out the serial port
+//   //_debugSerial->write(incoming); //An example of passing this byte out the serial port
 
-  //Debug printing
-  //  _debugSerial->print(F(" "));
-  //  if(incoming < 0x10) _debugSerial->print(F("0"));
-  //  if(incoming < 0x10) _debugSerial->print(F("0"));
-  //  _debugSerial->print(incoming, HEX);
-  //  if(rtcmFrameCounter % 16 == 0) _debugSerial->println();
-}
+//   //Debug printing
+//   //  _debugSerial->print(F(" "));
+//   //  if(incoming < 0x10) _debugSerial->print(F("0"));
+//   //  if(incoming < 0x10) _debugSerial->print(F("0"));
+//   //  _debugSerial->print(incoming, HEX);
+//   //  if(rtcmFrameCounter % 16 == 0) _debugSerial->println();
+// }
 
 
 
@@ -2846,49 +2846,51 @@ void SFE_UBLOX_GPS::process(uint8_t incoming, ubxPacket *incomingUBX, uint8_t re
 
 
 //Checks Serial for data, passing any new bytes to process()
-boolean SFE_UBLOX_GPS::checkUbloxSerial(ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID)
-{
-  while (_serialPort->available())
-  {
-    process(_serialPort->read(), incomingUBX, requestedClass, requestedID);
-  }
-  return (true);
+// boolean SFE_UBLOX_GPS::checkUbloxSerial(ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID)
+// {
+//   while (_serialPort->available())
+//   {
+//     process(_serialPort->read(), incomingUBX, requestedClass, requestedID);
+//   }
+//   return (true);
 
-} //end checkUbloxSerial()
+// } //end checkUbloxSerial()
 
 //Called regularly to check for available bytes on the user' specified port
 boolean SFE_UBLOX_GPS::checkUbloxInternal(ubxPacket *incomingUBX, uint8_t requestedClass, uint8_t requestedID)
 {
   if (commType == COMM_TYPE_I2C)
     return (checkUbloxI2C(incomingUBX, requestedClass, requestedID));
-  else if (commType == COMM_TYPE_SERIAL)
-    return (checkUbloxSerial(incomingUBX, requestedClass, requestedID));
+  // else if (commType == COMM_TYPE_SERIAL)
+  //   return (checkUbloxSerial(incomingUBX, requestedClass, requestedID));
   return false;
 }
 
 //Get the latest Position/Velocity/Time solution and fill all global variables
 boolean SFE_UBLOX_GPS::getPVT(uint16_t maxWait)
 {
-  if (autoPVT && autoPVTImplicitUpdate)
-  {
-    //The GPS is automatically reporting, we just check whether we got unread data
-    // if (_printDebug == true)
-    // {
-    //   _debugSerial->println(F("getPVT: Autoreporting"));
-    // }
-    checkUbloxInternal(&packetCfg, UBX_CLASS_NAV, UBX_NAV_PVT);
-    return moduleQueried.all;
-  }
-  else if (autoPVT && !autoPVTImplicitUpdate)
-  {
-    //Someone else has to call checkUblox for us...
-    // if (_printDebug == true)
-    // {
-    //   _debugSerial->println(F("getPVT: Exit immediately"));
-    // }
-    return (false);
-  }
-  else
+  // if (autoPVT && autoPVTImplicitUpdate)
+  // {
+  //   //The GPS is automatically reporting, we just check whether we got unread data
+  //   // if (_printDebug == true)
+  //   // {
+  //   //   _debugSerial->println(F("getPVT: Autoreporting"));
+  //   // }
+  //   checkUbloxInternal(&packetCfg, UBX_CLASS_NAV, UBX_NAV_PVT);
+  //   return moduleQueried.all;
+  // }
+  // else 
+  // if (autoPVT && !autoPVTImplicitUpdate)
+  // {
+  //   //Someone else has to call checkUblox for us...
+  //   // if (_printDebug == true)
+  //   // {
+  //   //   _debugSerial->println(F("getPVT: Exit immediately"));
+  //   // }
+  //   return (false);
+  // }
+  // else
+  if (true)
   {
     // if (_printDebug == true)
     // {
