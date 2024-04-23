@@ -27,15 +27,15 @@
 Adafruit_SSD1306 display(128, 32, &Wire, OLED_RESET);
 
 // GPS setup
-// SFE_UBLOX_GPS myGPS;
+SFE_UBLOX_GPS myGPS;
 
 // Menu setup
 int menu_type = -1;
 
-int menu_button_pin   = 2;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-int enter_button_pin  = 3;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-int down_button_pin   = 4;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
-int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+int menu_button_pin   = 10;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int enter_button_pin  = 11;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int down_button_pin   = 12;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+int up_button_pin     = 13;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
 
 
 // Radio Setup
@@ -374,8 +374,8 @@ void display_menu(int m_type) {
 
 
 void setup() {
-  // Serial.begin(9600);
-  // while(!Serial){}
+  Serial.begin(9600);
+  while(!Serial){}
   Wire.begin();         // join i2c bus (address optional for master)
 
   //!-------------------MENU SETUP-------------------
@@ -389,22 +389,22 @@ void setup() {
   //!-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    // Serial.println(F("SSD1306 allocation failed"));
+    Serial.println(F("SSD1306 allocation failed"));
     while(true){}; //proceed, loop forever
   }
 
 
   //!-------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
-  // if (myGPS.begin() == false) {
-  //   // Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
-  //   while (1) {}
-  // }
+  if (myGPS.begin() == false) {
+    Serial.println(F("Ublox GPS not detected at default I2C address. Please check wiring. Freezing."));
+    while (1) {}
+  }
 
   //!-------------------RADIO SETUP-------------------
-  // LoRa.setPins(10, 9, 2);
+  LoRa.setPins(5, 6, 9);
   if (!LoRa.begin(433E6)) {
-    // Serial.println("Starting LoRa failed!");
+    Serial.println("Starting LoRa failed!");
     while (1);
   }
 
