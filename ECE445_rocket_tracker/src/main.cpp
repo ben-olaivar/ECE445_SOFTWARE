@@ -42,14 +42,14 @@ int up_button_pin     = 13;  // pushbutton_up;    // the port mapping of the "UP
 struct Data_in {
     long lat = 0;
     long lon = 0;
-    char FAA_id = 0;
+    char* FAA_id = "KD9UGU";
 } beaconData;
 
 
 
 // Data_in beaconData = {0, 0, 0};    // data will default to 0 before proper data can be sent out
 
-float curr_freq = 433.0;
+float curr_freq = 433E6;
 
 
 
@@ -214,20 +214,32 @@ void compass() {
     if (menu_button_state == 1) {
       break;
     }
+
+    
     // get current tracker position
     long tracker_latitude = 401145031; //myGPS.getLatitude();
     long tracker_longitude = -882273297; //myGPS.getLongitude();
     // get current beacon position
-    // int packetSize = LoRa.parsePacket();
+    
 
-
-  
-    // if (packetSize) {   // received a packet
-    //   Serial.print(" data ");
-    //   LoRa.readBytes((byte *)&beaconData, packetSize);   // reads received freq into stored data
-    // }
-    long beacon_latitude  = 401145031;   //TODO: Remove these
+    // TODO:---------------BEGIN MAX---------------------------
+    long beacon_latitude  = 401145031;   //TODO: Remove these dummy vars
     long beacon_longitude = -882273297;  //TODO: Remove these
+    
+    // Constantly listening for packet
+    //? int packetSize = LoRa.parsePacket();
+    //? if (packetSize) {   // received a packet
+    //?   Serial.print(" data ");
+    //?   LoRa.readBytes((byte *)&beaconData, packetSize);   // reads received freq into stored data
+    //? }
+    
+    // grab packet data
+
+    // put packet data into beacon_latitude and beacon_longitude
+
+
+    // TODO:---------------END MAX---------------------------
+  
     
     display_data(beacon_latitude, beacon_longitude, tracker_latitude, tracker_longitude);  // update display given our new gps coords
   }
