@@ -4,11 +4,18 @@
 #include <LoRa.h>
 #include <Wire.h>
 
-struct Data {
-  int seq;
-  float y;
-} data;
+struct Data_out {
+    long lat = 123;   // dummy vals to start
+    long lon = 456;   // ^^^^
+    char* FAA_id = "KD9UGU";
+} beaconData;
 
+struct Data_in {
+    long freq = 433E6;
+    char* FAA_id = "KD9UGU";
+} trackerData;
+
+int timestamp = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -24,39 +31,32 @@ void setup() {
 }
 
 void loop() {
-  static int counter = 0, errors = 0, seq = 0;
+
   // try to parse packet
   int packetSize = LoRa.parsePacket();
-  if (packetSize) {
-    // received a packet
-    Serial.print("\nReceived packet size ");
-    Serial.print(packetSize);
-    Serial.print(" data ");
-    LoRa.readBytes((byte *)&data, packetSize);
-    // read packet
-    //while (LoRa.available())
-    for (int i = 0; i < packetSize; i++) {
-      // ((byte *) &data)[i] = LoRa.read();
-      Serial.print(' ');
-      Serial.print(((byte *)&data)[i]);
-    }
-    // print RSSI of packet
-    Serial.print("' with RSSI ");
-    Serial.println(LoRa.packetRssi());
-    Serial.print("seq = ");
-    Serial.print(data.seq);
-    Serial.print(" y = ");
-    Serial.print(data.y);
-    Serial.print(" received ");
-    Serial.print(++counter);
-    Serial.print(" errors ");
-    Serial.println(errors);
-    if (seq != data.seq) {
-      Serial.print("sequence number error expected ");
-      Serial.println(seq);
-      seq = data.seq;
-      errors++;
-    }
-    seq++;
+
+  if (packetSize) {           // check if got a packet, if yes then read
+
+    LoRa.readBytes((byte *)&trackerData, packetSize);
+
+    LoRa.setFrequency(trackerData.freq);      // change freq based on new incoming freq
+
+    Serial.print("got a new freq, properly set");
+
   }
+
+  if (millis() - timestamp > 3000) {        // every 3 seconds sendout current beacon data
+
+    LoRa.beginPacket();
+
+    LoRa.write((byte *)&beaconData, sizeof(beaconData));
+
+    LoRa.endPacket();
+
+    timestamp = millis();                   // reset 3 second timer
+
+    Serial.print("end beacon data send (dummy vals rn)");
+
+  }
+
 }
