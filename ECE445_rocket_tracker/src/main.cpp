@@ -306,7 +306,7 @@ void change_freq() {
         delay(100);
       }
 
-      LoRa.setFrequency(new_freq * 1E6);
+      LoRa.setFrequency(new_freq);
       curr_freq = new_freq;
 
       int timestamp = millis();
