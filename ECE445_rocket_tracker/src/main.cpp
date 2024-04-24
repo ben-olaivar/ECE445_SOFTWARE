@@ -299,13 +299,29 @@ void change_freq() {
     else if (enter_button_state == 1) {
       // transmit command
 
+      for (int i = 0; i < 5; i++) {
+        LoRa.beginPacket();
+        LoRa.write((byte *)&new_freq, sizeof(new_freq));
+        LoRa.endPacket();
+        delay(100);
+      }
 
       LoRa.setFrequency(new_freq * 1E6);
       curr_freq = new_freq;
 
-      //TODO: TX happens here, have it be stuck for X seconds and constantly resend new freq during this period
-      //todo  Beacon will will oscilate between only Rx and Tx for a period of X where Rx and Tx occur for X/2
+      int timestamp = millis();
+      int packet_status = LoRa.parsePacket();
 
+      while (!packet_status && ((millis() - timestamp) < 3000)) {
+        Serial.print("waiting for receive");
+        packet_status = LoRa.parsePacket();
+        //
+      }
+
+      if (!packet_status) {
+        Serial.print("freq change failed");
+      }
+      
       break;
     }
 
