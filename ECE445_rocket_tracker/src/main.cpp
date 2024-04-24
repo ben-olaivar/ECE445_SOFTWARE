@@ -228,8 +228,8 @@ void compass() {
     
 
     // TODO:---------------BEGIN MAX---------------------------
-    long beacon_latitude  = 401145031;   //TODO: Remove these dummy vars
-    long beacon_longitude = -882273297;  //TODO: Remove these
+    // long beacon_latitude  = 401145031;   //TODO: Remove these dummy vars
+    // long beacon_longitude = -882273297;  //TODO: Remove these
     
     // Constantly listening for packet
 
@@ -302,6 +302,10 @@ void change_freq() {
 
       LoRa.setFrequency(new_freq * 1E6);
       curr_freq = new_freq;
+
+      //TODO: TX happens here, have it be stuck for X seconds and constantly resend new freq during this period
+      //todo  Beacon will will oscilate between only Rx and Tx for a period of X where Rx and Tx occur for X/2
+
       break;
     }
 
