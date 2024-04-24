@@ -281,7 +281,7 @@ void compass() {
 
 void change_freq() {
   
-  float new_freq = 433.0;
+  long new_freq = 433E6;
   
   while (true) {
     bool menu_button_state   = !digitalRead(menu_button_pin);
