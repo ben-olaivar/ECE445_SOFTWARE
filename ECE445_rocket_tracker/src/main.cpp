@@ -268,8 +268,8 @@ void compass() {
 
     // put packet data into beacon_latitude and beacon_longitude
 
-    beacon_latitude = beaconData.lat;                     // assign lat val
-    beacon_longitude = beaconData.lon;                    // assign lon val
+    long beacon_latitude = beaconData.lat;                     // assign lat val
+    long beacon_longitude = beaconData.lon;                    // assign lon val
 
     // TODO:---------------END MAX---------------------------
   
