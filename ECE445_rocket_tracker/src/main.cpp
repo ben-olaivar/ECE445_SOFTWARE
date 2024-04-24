@@ -45,6 +45,11 @@ struct Data_in {
     char* FAA_id = "KD9UGU";
 } beaconData;
 
+struct Data_out {
+    long freq = 433E6;
+    char* FAA_id = "KD9UGU";
+} trackerData;
+
 
 
 // Data_in beaconData = {0, 0, 0};    // data will default to 0 before proper data can be sent out
@@ -227,16 +232,44 @@ void compass() {
     long beacon_longitude = -882273297;  //TODO: Remove these
     
     // Constantly listening for packet
-    //? int packetSize = LoRa.parsePacket();
-    //? if (packetSize) {   // received a packet
-    //?   Serial.print(" data ");
-    //?   LoRa.readBytes((byte *)&beaconData, packetSize);   // reads received freq into stored data
-    //? }
+
+      // -------------------------Max's Notes---------------------------
+
+      //? Even the duplex example seems to just grab data ASAP
+      //?
+      //? The "if" statement swapping the device between "rx only" and "tx only"
+      //? seems to be the only thing that lets it do both. All
+      //? other code is same as what we had with regards to reading
+      //? writing packets
+      //?
+      //? Therefore, to constantly listen for incoming data, we just
+      //? don't send anything out. Seems like it'll natively be listening always
+      //?
+      //? By seperating the RX code here, then as along as we are in compass()
+      //? then we will just have the tracker as a RX device.
+      //?
+      //? When we want to TX we will do this inside the appopriate menu function
+      //? which works cause this function call will be done
+
+      //? TLDR: Radio always is "listening" by having a "parsePacket()" call in a loop so 
+      //?       no extra setup needed to have it be always listening.
+
+      //? TLDRTLDR: Every "loop" we need to only do one "RX" action XOR one "TX" action
+
+      // ---------------------------------------------------------------
     
     // grab packet data
 
+    int packet_size = LoRa.parsePacket();                 // check for packet
+
+    if(packet_size) {                                     // if packet present (size > 0)
+      LoRa.readBytes((byte *)&beaconData, packet_size);   // read into beacon data struct
+    }
+
     // put packet data into beacon_latitude and beacon_longitude
 
+    beacon_latitude = beaconData.lat;                     // assign lat val
+    beacon_longitude = beaconData.lon;                    // assign lon val
 
     // TODO:---------------END MAX---------------------------
   
