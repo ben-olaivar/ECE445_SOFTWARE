@@ -26,6 +26,8 @@ SFE_UBLOX_GPS myGPS;
 void setup() {
   Serial.begin(9600);
   while (!Serial);
+
+  Wire.begin();
   
 
   Serial.println("LoRa Receiver");
@@ -64,9 +66,12 @@ void loop() {
 
   if (millis() - timestamp > 3000) {        // every 3 seconds sendout current beacon data
 
+    Serial.println("------------------");
     beaconData.lat = myGPS.getLatitude();
     beaconData.lon = myGPS.getLongitude();
 
+    Serial.println("beacon lat: " + String(beaconData.lat));
+    Serial.println("beacon long: " + String(beaconData.lon));
     LoRa.beginPacket();
 
     LoRa.write((byte *)&beaconData, sizeof(beaconData));
@@ -75,7 +80,6 @@ void loop() {
 
     timestamp = millis();                   // reset 3 second timer
 
-    Serial.println("end beacon data send (dummy vals rn)");
 
   }
 
