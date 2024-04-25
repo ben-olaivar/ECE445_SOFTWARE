@@ -236,8 +236,21 @@ void compass() {
     //   Serial.print(" data ");
     //   LoRa.readBytes((byte *)&beaconData, packetSize);   // reads received freq into stored data
     // }
-    long beacon_latitude  = 401145031;   //TODO: Remove these
-    long beacon_longitude = -882273297;  //TODO: Remove these
+    // long beacon_latitude  = 401145031;   //TODO: Remove these
+    // long beacon_longitude = -882273297;  //TODO: Remove these
+
+    //!---------------------receive from beacon---------------------
+    int packet_size = LoRa.parsePacket();                 // check for packet
+
+    if(packet_size) {                                     // if packet present (size > 0)
+      LoRa.readBytes((byte *)&beaconData, packet_size);   // read into beacon data struct
+    }
+
+    // put packet data into beacon_latitude and beacon_longitude
+
+    long beacon_latitude = beaconData.lat;                     // assign lat val
+    long beacon_longitude = beaconData.lon;                    // assign lon val
+    //!---------------------receive from beacon---------------------
     
     display_data(beacon_latitude, beacon_longitude, tracker_latitude, tracker_longitude);  // update display given our new gps coords
   }
