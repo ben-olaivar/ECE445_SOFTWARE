@@ -15,7 +15,7 @@ struct Data_in {
     char* FAA_id = "KD9UGU";
 } trackerData;
 
-int timestamp = 0;
+unsigned long timestamp = 0;
 
 void setup() {
   Serial.begin(9600);
