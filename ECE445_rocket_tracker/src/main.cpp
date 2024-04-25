@@ -4,9 +4,10 @@
 #include <LoRa.h>
 #include <Wire.h>
 
+// 4011055399719058, -8822548777629069
 struct Data_out {
-    long lat = 123;   // dummy vals to start
-    long lon = 456;   // ^^^^
+    long lat = 401105539;   // dummy vals to start
+    long lon = -882254877;   // ^^^^
     char* FAA_id = "KD9UGU";
 } beaconData;
 
