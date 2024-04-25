@@ -3,11 +3,13 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <Wire.h>
+//#include "SparkFun_u-blox_GNSS_Arduino_Library.h"
+#include "SparkFun_Ublox_Arduino_Library.h"
 
 // 4011055399719058, -8822548777629069
 struct Data_out {
-    long lat = 401105539;   // dummy vals to start
-    long lon = -882254877;   // ^^^^
+    long lat = 0;   // dummy vals to start
+    long lon = 0;   // ^^^^
     char* FAA_id = "KD9UGU";
 } beaconData;
 
@@ -17,6 +19,8 @@ struct Data_in {
 } trackerData;
 
 unsigned long timestamp = 0;
+
+SFE_UBLOX_GPS myGPS;
 
 void setup() {
   Serial.begin(9600);
@@ -29,6 +33,14 @@ void setup() {
     while (1)
       ;
   }
+
+  if (!myGPS.begin()) {
+    Serial.println("GPS failed to init!");
+    while(1) {
+      //
+    }
+  }
+
   Serial.println("Setup done");
 }
 
@@ -51,6 +63,9 @@ void loop() {
   }
 
   if (millis() - timestamp > 3000) {        // every 3 seconds sendout current beacon data
+
+    beaconData.lat = myGPS.getLatitude();
+    beaconData.lon = myGPS.getLongitude();
 
     LoRa.beginPacket();
 
