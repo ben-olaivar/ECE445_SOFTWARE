@@ -22,12 +22,13 @@ void setup() {
   while (!Serial)
     ;
   Serial.println("LoRa Receiver");
-  LoRa.setPins(10, 9, 2);  // for Lora 32u4
+  LoRa.setPins(10, 9, 2);
   if (!LoRa.begin(433E6)) {
     Serial.println("Starting LoRa failed!");
     while (1)
       ;
   }
+  Serial.println("Setup done");
 }
 
 void loop() {
@@ -39,9 +40,12 @@ void loop() {
 
     LoRa.readBytes((byte *)&trackerData, packetSize);
 
+    Serial.println("Got a new freq:");
+    Serial.println(trackerData.freq);
+
     LoRa.setFrequency(trackerData.freq);      // change freq based on new incoming freq
 
-    Serial.print("got a new freq, properly set");
+    Serial.println("Properly set");
 
   }
 
@@ -55,7 +59,7 @@ void loop() {
 
     timestamp = millis();                   // reset 3 second timer
 
-    Serial.print("end beacon data send (dummy vals rn)");
+    Serial.println("end beacon data send (dummy vals rn)");
 
   }
 
