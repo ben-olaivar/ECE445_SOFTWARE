@@ -53,7 +53,7 @@ struct Data_in {
 
 // Data_in beaconData = {0, 0, 0};    // data will default to 0 before proper data can be sent out
 
-float curr_freq = 433.0;
+float curr_freq = 433E6;
 
 
 
@@ -227,23 +227,16 @@ void compass() {
 
     // Serial.println(tracker_latitude);
     // Serial.println(tracker_longitude);
-    // get current beacon position
-    // int packetSize = LoRa.parsePacket();
-
-
-  
-    // if (packetSize) {   // received a packet
-    //   Serial.print(" data ");
-    //   LoRa.readBytes((byte *)&beaconData, packetSize);   // reads received freq into stored data
-    // }
-    // long beacon_latitude  = 401145031;   //TODO: Remove these
-    // long beacon_longitude = -882273297;  //TODO: Remove these
 
     //!---------------------receive from beacon---------------------
+    // long beacon_latitude  = 401145031;   //TODO: Remove these dummy values
+    // long beacon_longitude = -882273297;  //TODO: Remove these dummy values
+
     int packet_size = LoRa.parsePacket();                 // check for packet
 
     if(packet_size) {                                     // if packet present (size > 0)
       LoRa.readBytes((byte *)&beaconData, packet_size);   // read into beacon data struct
+      Serial.println("Received packet");
     }
 
     // put packet data into beacon_latitude and beacon_longitude
