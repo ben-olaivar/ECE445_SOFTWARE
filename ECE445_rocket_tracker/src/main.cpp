@@ -3,7 +3,7 @@
 #include <Wire.h>
 
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_SharpMem.h>
 
 #include <string.h>
 
@@ -14,17 +14,21 @@
 #include <LoRa.h>
 
 
-#define SCREEN_WIDTH    128   // OLED display width, in pixels
-#define SCREEN_HEIGHT   32    // OLED display height, in pixels
-#define COMPASS_LENGTH  11
+#define SCREEN_WIDTH    400   // OLED display width, in pixels
+#define SCREEN_HEIGHT   250    // OLED display height, in pixels
+#define COMPASS_LENGTH  30
 
 
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-// The pins for I2C are defined by the Wire-library. 
-// On an arduino UNO:       A4(SDA), A5(SCL)
-#define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_ADDRESS 0x3D ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
-Adafruit_SSD1306 display(128, 32, &Wire, OLED_RESET);
+// Display Stuff
+#define SHARP_SCK  13
+#define SHARP_MOSI 12
+#define SHARP_SS   11
+
+#define BLACK 0
+#define WHITE 1
+
+Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 400, 240);
+
 
 // GPS setup
 SFE_UBLOX_GPS myGPS;
@@ -32,10 +36,10 @@ SFE_UBLOX_GPS myGPS;
 // Menu setup
 int menu_type = -1;
 
-int menu_button_pin   = 10;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-int enter_button_pin  = 11;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-int down_button_pin   = 12;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
-int up_button_pin     = 13;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+int menu_button_pin   = 9;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int enter_button_pin  = 10;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int down_button_pin   = 5;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+int up_button_pin     = 6;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
 
 
 // Radio Setup
@@ -64,18 +68,18 @@ float curr_freq = 433.0;
 */
 void display_distance_data(long distance_data) {
   int text_length = 15;
-  display.setTextSize(1);               // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE);  // Draw white text
+  display.setTextSize(2);               // Normal 1:1 pixel scale
+  display.setTextColor(BLACK);  // Draw white text
   display.setCursor(35, 0);             // Start at top-left corner
   display.cp437(true);                  // Use full 256 char 'Code Page 437' font
 
-  char distance_text[text_length] = "Distance: ";
+  // char distance_text[text_length] = "Distance: ";
   String distance = "Distance: " + String(distance_data) + "m";
-  distance.toCharArray(distance_text, text_length);
-
-  for (int letter = 0; letter < text_length; letter++) {
-    display.write(distance_text[letter]);
-  }
+  // distance.toCharArray(distance_text, text_length);
+  display.print(distance);
+  // for (int letter = 0; letter < text_length; letter++) {
+  //   display.write(distance_text[letter]);
+  // }
 }
 
 /* angle_to_x_pos():
@@ -113,7 +117,7 @@ int angle_to_y_pos(float angle_radians) {
 *     - angle_to_y_pos()
 */
 void drawCompass(float tracker_latitude, float tracker_longitude, float target_latitude, float target_longitude) {
-  int compass_x_center = 12;
+  int compass_x_center = 50;
   int compass_y_center = SCREEN_HEIGHT / 2;
 
   float y_1 = tracker_latitude;
@@ -161,9 +165,12 @@ void drawCompass(float tracker_latitude, float tracker_longitude, float target_l
   int compass_tip_x = compass_x_center + angle_to_x_pos(angle_radians);
   int compass_tip_y = compass_y_center - angle_to_y_pos(angle_radians);
 
-  display.fillCircle(compass_x_center, compass_y_center, 2, SSD1306_INVERSE); // Draw the abse of the 
 
-  display.drawLine(compass_x_center, compass_y_center, compass_tip_x, compass_tip_y, SSD1306_WHITE);
+  display.fillCircle(compass_x_center, compass_y_center, COMPASS_LENGTH + 5, BLACK); // Draw the abse of the 
+  display.fillCircle(compass_x_center, compass_y_center, COMPASS_LENGTH + 5 - 2, WHITE); // Draw the abse of the 
+  display.fillCircle(compass_x_center, compass_y_center, 3, BLACK); // Draw the abse of the 
+
+  display.drawLine(compass_x_center, compass_y_center, compass_tip_x, compass_tip_y, BLACK);
 
 }
 
@@ -199,7 +206,7 @@ void display_data(float beacon_latitude, float beacon_longitude, float tracker_l
   display_distance_data(distance);
 
   // Upload to display
-  display.display();
+  display.refresh();
 
 }
 
@@ -215,8 +222,11 @@ void compass() {
       break;
     }
     // get current tracker position
-    long tracker_latitude = 401145031; //myGPS.getLatitude();
-    long tracker_longitude = -882273297; //myGPS.getLongitude();
+    long tracker_latitude = myGPS.getLatitude();
+    long tracker_longitude = myGPS.getLongitude();
+
+    // Serial.println(tracker_latitude);
+    // Serial.println(tracker_longitude);
     // get current beacon position
     // int packetSize = LoRa.parsePacket();
 
@@ -271,24 +281,36 @@ void change_freq() {
       new_freq -= 0.1;
       delay(300);
     }
+    
     String display_string = "Frequency:\n" + String(new_freq);
 
     int text_length = 80;
-    char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
+    // char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
 
     display.setTextSize(2);               // Normal 1:1 pixel scale
-    display.setTextColor(SSD1306_WHITE);  // Draw white text
+    display.setTextColor(BLACK);  // Draw white text
     display.setCursor(0, 0);              // Start at top-left corner
-    display.cp437(true);                  // Use full 256 char 'Code Page 437' font
-    display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
+    // display.cp437(true);                  // Use full 256 char 'Code Page 437' font
+    // display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
     display.clearDisplay();
-    display.write(menu_text, display_string.length());  // put string into buffer memory
+    display.print(display_string);
+    // display.write(menu_text, display_string.length());  // put string into buffer memory
 
-    display.display();  // update display from buffer
+    display.refresh();  // update display from buffer
 
   }
 
 }
+
+
+  // display.setTextSize(2);               // Normal 1:1 pixel scale
+  // display.setTextColor(BLACK);  // Draw white text
+  // display.setCursor(0, 0);              // Start at top-left corner
+  // // display.cp437(true);                  // Use full 256 char 'Code Page 437' font
+  // // display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
+  // display.print(display_string);  // put string into buffer memory
+
+  // display.refresh();  // update display from buffer
 
 
 //!------------------------BEGIN MENU DISPLAY------------------------
@@ -359,14 +381,14 @@ void display_menu(int m_type) {
   // Serial.println("Display String: " + display_string);
   display_string = row_1 + row_2 + row_3 + row_4;
 
-  display.setTextSize(1);               // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE);  // Draw white text
+  display.setTextSize(2);               // Normal 1:1 pixel scale
+  display.setTextColor(BLACK);  // Draw white text
   display.setCursor(0, 0);              // Start at top-left corner
-  display.cp437(true);                  // Use full 256 char 'Code Page 437' font
-  display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
-  display.write(menu_text, display_string.length());  // put string into buffer memory
+  // display.cp437(true);                  // Use full 256 char 'Code Page 437' font
+  // display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
+  display.print(display_string);  // put string into buffer memory
 
-  display.display();  // update display from buffer
+  display.refresh();  // update display from buffer
 
 }
 
@@ -388,8 +410,8 @@ void setup() {
 
   //!-------------------DISPLAY SETUP-------------------
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
+  if(!display.begin()) {
+    Serial.println(F("Display allocation failed"));
     while(true){}; //proceed, loop forever
   }
 
@@ -402,22 +424,35 @@ void setup() {
   }
 
   //!-------------------RADIO SETUP-------------------
-  LoRa.setPins(5, 6, 9);
+  LoRa.setPins(19, 17, 18);
   if (!LoRa.begin(433E6)) {
     Serial.println("Starting LoRa failed!");
     while (1);
   }
 
   // start with the top (base) menu (menu 0)
-  display.clearDisplay(); // Clear the buffer
+  // display.clearDisplay(); // Clear the buffe
+  // display.setTextSize(3);
+  // display.setTextColor(BLACK);
+  // display.setCursor(0,0);
   display_menu(0);
   menu_type = 0;
+  // display.println("end of setup");
+  // display.refresh();
+  // Serial.println("End of setup");
+  // while(1);
 }
 
 
 
 
 void loop() {
+
+  // int menu_button_pin   = 10;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+  // int enter_button_pin  = 9;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+  // int down_button_pin   = 6;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
+  // int up_button_pin     = 5;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
+
   bool menu_button_state   = !digitalRead(menu_button_pin);
   bool enter_button_state  = !digitalRead(enter_button_pin);
   bool up_button_state     = !digitalRead(up_button_pin);
@@ -444,28 +479,28 @@ void loop() {
       display_menu(4);
       display_menu(0);
       menu_type = 0;
-      delay(300);
+      delay(200);
     }
 
     else if (menu_type == 1) {  // enter frequency change sub-menu 
       display_menu(2);
       menu_type = 2;
-      delay(300);
+      delay(200);
     }
 
     else if (menu_type == 2) {  // change frequency function
-      delay(300);
+      delay(200);
       display_menu(5);
       display_menu(0);
       menu_type = 0;
-      delay(300);
+      delay(200);
     }
 
     else if (menu_type == 3) {  // 'back' go back to main menu
       display_menu(0);
-      delay(300);
+      delay(200);
       menu_type = 0;
-      delay(300);
+      delay(200);
     }
 
   }
