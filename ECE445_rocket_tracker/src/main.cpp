@@ -277,8 +277,8 @@ void change_freq() {
       //TODO: Change freq stufff
 
       // LoRa.setFrequency(new_freq * 1E6);
-      curr_freq = long(new_freq * 1E6);
       // break;
+      long new_freq_transmit = new_freq * 1E6;
 
 
 
@@ -286,12 +286,12 @@ void change_freq() {
 
       for (int i = 0; i < 5; i++) {
         LoRa.beginPacket();
-        LoRa.write((byte *)&curr_freq, sizeof(curr_freq));
+        LoRa.write((byte *)&new_freq_transmit, sizeof(new_freq_transmit));
         LoRa.endPacket();
         delay(100);
       }
 
-      LoRa.setFrequency(curr_freq);
+      LoRa.setFrequency(new_freq_transmit);
       // curr_freq = new_freq;
 
       int packet_status = LoRa.parsePacket();
@@ -305,7 +305,10 @@ void change_freq() {
 
       if (!packet_status) {
         Serial.println("freq change failed");
+        LoRa.setFrequency(curr_freq);
+        
       } else {
+        curr_freq = new_freq_transmit;
         Serial.println("freq change success!");
 
       }
