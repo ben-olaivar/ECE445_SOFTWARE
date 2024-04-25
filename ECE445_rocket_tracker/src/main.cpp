@@ -53,7 +53,7 @@ struct Data_in {
 
 // Data_in beaconData = {0, 0, 0};    // data will default to 0 before proper data can be sent out
 
-float curr_freq = 433E6;
+long curr_freq = 433E6;
 
 
 
@@ -274,12 +274,46 @@ void change_freq() {
     
     //!-----------------------ENTER-----------------------
     else if (enter_button_state == 1) {
+      //TODO: Change freq stufff
+
+      // LoRa.setFrequency(new_freq * 1E6);
+      curr_freq = long(new_freq * 1E6);
+      // break;
+
+
+
       // transmit command
 
+      for (int i = 0; i < 5; i++) {
+        LoRa.beginPacket();
+        LoRa.write((byte *)&curr_freq, sizeof(curr_freq));
+        LoRa.endPacket();
+        delay(100);
+      }
 
-      LoRa.setFrequency(new_freq * 1E6);
-      curr_freq = new_freq * 1E6;
+      LoRa.setFrequency(curr_freq);
+      // curr_freq = new_freq;
+
+      int packet_status = LoRa.parsePacket();
+      int timestamp = millis();
+
+      while (!packet_status && ((millis() - timestamp) < 3000)) {
+        Serial.println("waiting for receive");
+        packet_status = LoRa.parsePacket();
+        //
+      }
+
+      if (!packet_status) {
+        Serial.println("freq change failed");
+      } else {
+        Serial.println("freq change success!");
+
+      }
+      
       break;
+
+
+      //TODO: Change freq stufff
     }
 
     //!-----------------------UP-----------------------
