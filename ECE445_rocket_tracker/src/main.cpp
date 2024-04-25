@@ -5,6 +5,7 @@
 #include <Wire.h>
 //#include "SparkFun_u-blox_GNSS_Arduino_Library.h"
 #include "SparkFun_Ublox_Arduino_Library.h"
+// #include "gps.h"
 
 // 4011055399719058, -8822548777629069
 struct Data_out {
@@ -24,21 +25,20 @@ SFE_UBLOX_GPS myGPS;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial)
-    ;
+  while (!Serial);
+  
+
   Serial.println("LoRa Receiver");
   LoRa.setPins(10, 9, 2);
+
   if (!LoRa.begin(433E6)) {
     Serial.println("Starting LoRa failed!");
-    while (1)
-      ;
+    while (1);
   }
 
   if (!myGPS.begin()) {
     Serial.println("GPS failed to init!");
-    while(1) {
-      //
-    }
+    while(1);
   }
 
   Serial.println("Setup done");
