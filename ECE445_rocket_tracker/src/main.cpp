@@ -217,10 +217,16 @@ void compass() {
   //TODO: while(menu button not pressed)
   while (true) {
     bool menu_button_state   = !digitalRead(menu_button_pin);
+    bool enter_button_state  = !digitalRead(enter_button_pin);
+    bool up_button_state     = !digitalRead(up_button_pin);
+    bool down_button_state   = !digitalRead(down_button_pin);
 
+
+    //!-----------------------MENU-----------------------
     if (menu_button_state == 1) {
       break;
     }
+    
     // get current tracker position
     long tracker_latitude = myGPS.getLatitude();
     long tracker_longitude = myGPS.getLongitude();
@@ -252,7 +258,7 @@ void compass() {
 
 void change_freq() {
   
-  float new_freq = 433.0;
+  float new_freq = curr_freq / 1E6;
   
   while (true) {
     bool menu_button_state   = !digitalRead(menu_button_pin);
@@ -272,7 +278,7 @@ void change_freq() {
 
 
       LoRa.setFrequency(new_freq * 1E6);
-      curr_freq = new_freq;
+      curr_freq = new_freq * 1E6;
       break;
     }
 
@@ -326,7 +332,6 @@ void display_menu(int m_type) {
     return;
   }
 
-  display.clearDisplay();       // clear buffer memory
 
   int text_length = 80;
   char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
@@ -354,7 +359,7 @@ void display_menu(int m_type) {
 
     case 2: // This is sub menu of selected Frequency Change
       row_1 = "---Freq Change---\n";
-      row_2 = "Curr_freq: " + String(curr_freq) + "\n";
+      row_2 = "Curr_freq: " + String(curr_freq / 1E6) + "\n";
       row_3 = "> Set Frequency: <\n";
       row_4 = "Back";
         // t_frequency;
@@ -363,7 +368,7 @@ void display_menu(int m_type) {
 
     case 3: // This is sub menu of selected Frequency Change
       row_1 = "---Freq Change---\n";
-      row_2 = "Curr_freq: " + String(curr_freq) + "\n";
+      row_2 = "Curr_freq: " + String(curr_freq / 1E6) + "\n";
       row_3 = "Set Frequency:\n";
       row_4 = "> Back <";
         // t_frequency;
@@ -372,11 +377,17 @@ void display_menu(int m_type) {
 
     case 4: // This is sub menu of Set Frequency Change
       compass();
+      row_1 = "-------MENU-------\n";
+      row_2 = "> Compass <\n";
+      row_3 = "Frequency Change";
 
       break;
 
     case 5:
       change_freq();
+      // row_1 = "-------MENU-------\n";
+      // row_2 = "> Compass <\n";
+      // row_3 = "Frequency Change";
 
       break;
 
@@ -387,6 +398,7 @@ void display_menu(int m_type) {
   // Serial.println("Display String: " + display_string);
   display_string = row_1 + row_2 + row_3 + row_4;
 
+  display.clearDisplay();       // clear buffer memory
   display.setTextSize(2);               // Normal 1:1 pixel scale
   display.setTextColor(BLACK);  // Draw white text
   display.setCursor(0, 0);              // Start at top-left corner
