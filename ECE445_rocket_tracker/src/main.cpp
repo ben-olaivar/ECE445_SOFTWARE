@@ -4,8 +4,8 @@
 #include <LoRa.h>
 #include <Wire.h>
 //#include "SparkFun_u-blox_GNSS_Arduino_Library.h"
-#include "SparkFun_Ublox_Arduino_Library.h"
-// #include "gps.h"
+// #include "SparkFun_Ublox_Arduino_Library.h"
+#include "gps.h"
 
 // 4011055399719058, -8822548777629069
 struct Data_out {
