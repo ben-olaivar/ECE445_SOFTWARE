@@ -16,7 +16,7 @@
 
 #define SCREEN_WIDTH    400   // OLED display width, in pixels
 #define SCREEN_HEIGHT   250    // OLED display height, in pixels
-#define COMPASS_LENGTH  30
+#define COMPASS_LENGTH  40
 
 
 // Display Stuff
@@ -36,8 +36,8 @@ SFE_UBLOX_GPS myGPS;
 // Menu setup
 int menu_type = -1;
 
-int menu_button_pin   = 9;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
-int enter_button_pin  = 10;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int menu_button_pin   = 10;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
+int enter_button_pin  = 9;  // pushbutton_enter; // the port mapping of the "ENTER"pushbutton pin
 int down_button_pin   = 5;  // pushbutton_down;  // the port mapping of the "DOWN" pushbutton pin
 int up_button_pin     = 6;  // pushbutton_up;    // the port mapping of the "UP"   pushbutton pin
 
@@ -67,14 +67,14 @@ long curr_freq = 433E6;
 *     - long distance_data: the distance in meters we'd like to show on the screen
 */
 void display_distance_data(long distance_data) {
-  int text_length = 15;
-  display.setTextSize(2);               // Normal 1:1 pixel scale
+  // int text_length = 15;
+  display.setTextSize(3);               // Normal 1:1 pixel scale
   display.setTextColor(BLACK);  // Draw white text
-  display.setCursor(35, 0);             // Start at top-left corner
+  display.setCursor(0, 10);             // Start at top-left corner
   display.cp437(true);                  // Use full 256 char 'Code Page 437' font
 
   // char distance_text[text_length] = "Distance: ";
-  String distance = "Distance: " + String(distance_data) + "m";
+  String distance = " Distance: " + String(distance_data) + "m";
   // distance.toCharArray(distance_text, text_length);
   display.print(distance);
   // for (int letter = 0; letter < text_length; letter++) {
@@ -117,7 +117,7 @@ int angle_to_y_pos(float angle_radians) {
 *     - angle_to_y_pos()
 */
 void drawCompass(float tracker_latitude, float tracker_longitude, float target_latitude, float target_longitude) {
-  int compass_x_center = 50;
+  int compass_x_center = SCREEN_WIDTH / 2;
   int compass_y_center = SCREEN_HEIGHT / 2;
 
   float y_1 = tracker_latitude;
@@ -168,7 +168,7 @@ void drawCompass(float tracker_latitude, float tracker_longitude, float target_l
 
   display.fillCircle(compass_x_center, compass_y_center, COMPASS_LENGTH + 5, BLACK); // Draw the abse of the 
   display.fillCircle(compass_x_center, compass_y_center, COMPASS_LENGTH + 5 - 2, WHITE); // Draw the abse of the 
-  display.fillCircle(compass_x_center, compass_y_center, 3, BLACK); // Draw the abse of the 
+  display.fillCircle(compass_x_center, compass_y_center, 4, BLACK); // Draw the abse of the 
 
   display.drawLine(compass_x_center, compass_y_center, compass_tip_x, compass_tip_y, BLACK);
 
@@ -211,15 +211,17 @@ void display_data(float beacon_latitude, float beacon_longitude, float tracker_l
 }
 
 
+bool first_packet_received = false;
+
 
 void compass() {
 
   //TODO: while(menu button not pressed)
   while (true) {
     bool menu_button_state   = !digitalRead(menu_button_pin);
-    bool enter_button_state  = !digitalRead(enter_button_pin);
-    bool up_button_state     = !digitalRead(up_button_pin);
-    bool down_button_state   = !digitalRead(down_button_pin);
+    // bool enter_button_state  = !digitalRead(enter_button_pin);
+    // bool up_button_state     = !digitalRead(up_button_pin);
+    // bool down_button_state   = !digitalRead(down_button_pin);
 
 
     //!-----------------------MENU-----------------------
@@ -234,14 +236,31 @@ void compass() {
     // Serial.println(tracker_latitude);
     // Serial.println(tracker_longitude);
 
+
     //!---------------------receive from beacon---------------------
     // long beacon_latitude  = 401145031;   //TODO: Remove these dummy values
     // long beacon_longitude = -882273297;  //TODO: Remove these dummy values
 
-    int packet_size = LoRa.parsePacket();                 // check for packet
+    int packet_status = LoRa.parsePacket();
+    int timestamp = millis();
 
-    if(packet_size) {                                     // if packet present (size > 0)
-      LoRa.readBytes((byte *)&beaconData, packet_size);   // read into beacon data struct
+    // while (!first_packet_received && !packet_status && ((millis() - timestamp) < 5000)) {
+    //   Serial.println("waiting for initial gps signal");
+    //   packet_status = LoRa.parsePacket();
+    //   // 
+    // }
+
+    // if (!packet_status) {
+    //   Serial.println("No initial packet received");
+    // } else {
+    //   first_packet_received = true;
+    // }
+
+
+    // int packet_size = LoRa.parsePacket();                 // check for packet
+
+    if(packet_status) {                                     // if packet present (size > 0)
+      LoRa.readBytes((byte *)&beaconData, packet_status);   // read into beacon data struct
       Serial.println("Received packet");
     }
 
@@ -257,6 +276,7 @@ void compass() {
 }
 
 void change_freq() {
+  delay(500);
   
   float new_freq = curr_freq / 1E6;
   
@@ -296,22 +316,47 @@ void change_freq() {
 
       int packet_status = LoRa.parsePacket();
       int timestamp = millis();
+      display.setTextSize(3);               // Normal 1:1 pixel scale
+      display.setTextColor(BLACK);  // Draw white text
+      display.setCursor(0, 10);              // Start at top-left corner
+      display.clearDisplay();
+      display.print(" Attempting to change \n Frequency...");
+      display.refresh();  // update display from buffer
 
-      while (!packet_status && ((millis() - timestamp) < 3000)) {
+      while (!packet_status && ((millis() - timestamp) < 5000)) {
         Serial.println("waiting for receive");
         packet_status = LoRa.parsePacket();
-        //
+        // 
       }
 
       if (!packet_status) {
         Serial.println("freq change failed");
-        LoRa.setFrequency(curr_freq);
+        display.setTextSize(3);               // Normal 1:1 pixel scale
+        display.setTextColor(BLACK);  // Draw white text
+        display.setCursor(0, 10);              // Start at top-left corner
+        display.clearDisplay();
+        display.print(" Freq Change Failed!\n\n Reverting to old \n Frequency: " + String(float(curr_freq / 1E6)));
+        display.refresh();  // update display from buffer
         
+        LoRa.setFrequency(curr_freq);
+
       } else {
         curr_freq = new_freq_transmit;
-        Serial.println("freq change success!");
+        Serial.println("Freq change success!");
+        // first_packet_received = false;
+
+
+        display.setTextSize(3);               // Normal 1:1 pixel scale
+        display.setTextColor(BLACK);  // Draw white text
+        display.setCursor(0, 10);              // Start at top-left corner
+        display.clearDisplay();
+        display.print(" Freq Change Success!\n\n New Frequency: " + String(new_freq));
+        display.refresh();  // update display from buffer
+
 
       }
+      
+      delay(3000);
       
       break;
 
@@ -331,20 +376,20 @@ void change_freq() {
       delay(300);
     }
     
-    String display_string = "Frequency:\n" + String(new_freq);
+    String display_string = " Frequency:\n " + String(new_freq);
 
     int text_length = 80;
     // char menu_text[text_length];// = "-------MENU-------\n> Compass <\nFrequency Change";
 
-    display.setTextSize(2);               // Normal 1:1 pixel scale
-    display.setTextColor(BLACK);  // Draw white text
-    display.setCursor(0, 0);              // Start at top-left corner
     // display.cp437(true);                  // Use full 256 char 'Code Page 437' font
     // display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
-    display.clearDisplay();
-    display.print(display_string);
     // display.write(menu_text, display_string.length());  // put string into buffer memory
 
+    display.setTextSize(3);               // Normal 1:1 pixel scale
+    display.setTextColor(BLACK);  // Draw white text
+    display.setCursor(0, 10);              // Start at top-left corner
+    display.clearDisplay();
+    display.print(display_string);
     display.refresh();  // update display from buffer
 
   }
@@ -380,43 +425,43 @@ void display_menu(int m_type) {
 
   switch (m_type) {
     case 0: // This is main menu selected Compass
-      row_1 = "-------MENU-------\n";
-      row_2 = "> Compass <\n";
-      row_3 = "Frequency Change";
+      row_1 = " -------MENU-------\n";
+      row_2 = " > Compass <\n";
+      row_3 = " Frequency Change";
 
       break;
 
     case 1: // Main menu selected Frequency Change
-      row_1 = "-------MENU-------\n";
-      row_2 = "Compass\n";
-      row_3 = "> Frequency Change <";
+      row_1 = " -------MENU-------\n";
+      row_2 = " Compass\n";
+      row_3 = " > Frequency Change <";
 
 
       break;
 
     case 2: // This is sub menu of selected Frequency Change
-      row_1 = "---Freq Change---\n";
-      row_2 = "Curr_freq: " + String(curr_freq / 1E6) + "\n";
-      row_3 = "> Set Frequency: <\n";
-      row_4 = "Back";
+      row_1 = " ---Freq Change---\n";
+      row_2 = " Curr_freq: " + String(curr_freq / 1E6) + "\n";
+      row_3 = " > Set Frequency: <\n";
+      row_4 = " Back";
         // t_frequency;
 
       break;
 
     case 3: // This is sub menu of selected Frequency Change
-      row_1 = "---Freq Change---\n";
-      row_2 = "Curr_freq: " + String(curr_freq / 1E6) + "\n";
-      row_3 = "Set Frequency:\n";
-      row_4 = "> Back <";
+      row_1 = " ---Freq Change---\n";
+      row_2 = " Curr_freq: " + String(curr_freq / 1E6) + "\n";
+      row_3 = " Set Frequency:\n";
+      row_4 = " > Back <";
         // t_frequency;
 
       break;
 
     case 4: // This is sub menu of Set Frequency Change
       compass();
-      row_1 = "-------MENU-------\n";
-      row_2 = "> Compass <\n";
-      row_3 = "Frequency Change";
+      row_1 = " -------MENU-------\n";
+      row_2 = " > Compass <\n";
+      row_3 = " Frequency Change";
 
       break;
 
@@ -436,9 +481,9 @@ void display_menu(int m_type) {
   display_string = row_1 + row_2 + row_3 + row_4;
 
   display.clearDisplay();       // clear buffer memory
-  display.setTextSize(2);               // Normal 1:1 pixel scale
+  display.setTextSize(3);               // Normal 1:1 pixel scale
   display.setTextColor(BLACK);  // Draw white text
-  display.setCursor(0, 0);              // Start at top-left corner
+  display.setCursor(0, 10);              // Start at top-left corner
   // display.cp437(true);                  // Use full 256 char 'Code Page 437' font
   // display_string.toCharArray(menu_text, display_string.length() + 1); // convert string to char array for .write() func
   display.print(display_string);  // put string into buffer memory
@@ -471,6 +516,14 @@ void setup() {
   }
 
 
+  //!-------------------RADIO SETUP-------------------
+  LoRa.setPins(19, 17, 18);
+  if (!LoRa.begin(433E6)) {
+    Serial.println("Starting LoRa failed!");
+    while (1);
+  }
+
+
   //!-------------------GPS SETUP-------------------
   // Connect to the Ublox module using Wire port
   if (myGPS.begin() == false) {
@@ -478,12 +531,6 @@ void setup() {
     while (1) {}
   }
 
-  //!-------------------RADIO SETUP-------------------
-  LoRa.setPins(19, 17, 18);
-  if (!LoRa.begin(433E6)) {
-    Serial.println("Starting LoRa failed!");
-    while (1);
-  }
 
   // start with the top (base) menu (menu 0)
   // display.clearDisplay(); // Clear the buffe
